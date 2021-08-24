@@ -15,8 +15,8 @@ class glObject {
       this.projectionMatrixID = gl.getUniformLocation(this.program, "projMatrix");
 
       this.specular = vec4(0.8, 0.8, 0.8, 1.0);
-      this.diffuse = vec4(0.9, 0.8, 0.1, 1.0);
-      this.ambient = vec4(1.0, 0.8, 0.0, 1.0);
+      this.diffuse = vec4(0.9, 0.9, 0.9, 1.0);
+      this.ambient = vec4(0.8, 0.8, 0.8, 1.0);
       this.shininess = 80.0;
 
       this.useVertex = gl.getUniformLocation(this.program, "useVertex");

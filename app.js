@@ -105,12 +105,16 @@ window.onload = function init(){
    objects.push(plane);
    var sphere = new Sphere(4);
    sphere.setSize(0.15,0.15,0.15);
-   sphere.setLocation(-0.2,0.15,0);
+   sphere.setLocation(-0.5,0.15,0);
    objects.push(sphere);
    var cube = new Cube();
    cube.setSize(0.1,0.1,0.1);
-   cube.setLocation(0.2,0.1,0);
+   cube.setLocation(0.5,0.1,0);
    objects.push(cube);
+   var tower = new OBJLoader("models/cybertruck.obj", "textures/metal.jpg");
+   tower.setSize(0.001, 0.001, 0.001);
+   tower.setLocation(0,0.05,0);
+   objects.push(tower);
    skybox = new Skybox();
    render();
 };
