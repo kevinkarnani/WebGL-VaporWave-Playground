@@ -75,7 +75,7 @@ void main()
          } else {
             float cspot1 = pow(max(dot(-L1, LS1), 0.0), lightAlpha1);
             float dropoff1 = 1.0/max(dot(pos - lightPosInCam1, pos - lightPosInCam1), 0.00001);
-            adjust1 = cspot1 * dropoff1;
+            adjust1 = cspot1 * 1.0;
          }
       }
       float adjust2;
@@ -91,7 +91,7 @@ void main()
          } else {
             float cspot2 = pow(max(dot(-L2, LS2), 0.0), lightAlpha2);
             float dropoff2 = 1.0/max(dot(pos - lightPosInCam2, pos - lightPosInCam2), 0.00001);
-            adjust2 = cspot2 * dropoff2;
+            adjust2 = cspot2 * 1.0;
          }
       }
       fColor = adjust1*(ambient1 + diffuse1 + spec1) + adjust2*(ambient2 + diffuse2 + spec2);

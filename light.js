@@ -7,7 +7,7 @@ class Light {
       this.alpha = 100.0;
       this.type = 0; // Distance
       this.direction = vec4(0, 0, 0, 1);
-      this.cutoffAngle = 25.0 * (Math.PI)/180.0;
+      this.cutoffAngle = 45.0 * (Math.PI)/180.0;
       this.off = false;
    }
 

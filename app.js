@@ -100,17 +100,17 @@ window.onload = function init(){
    globalCamera.pitch(45);
    carCamera = new CarCamera();
    sun = new Light();
-   sun.setLocation(0,1,0);
-   sun.setAmbient(1.0, 1.0, 1.0);
+   sun.setLocation(0,0,10);
+   sun.setAmbient(0.5, 0.5, 0.5);
+   //sun.turnOff();
    flashlight = new Light();
    flashlight.setType(1);
    flashlight.setAmbient(1.0, 1.0, 1.0);
-   flashlight.turnOff();
    var plane = new Plane(5);
-   plane.setSize(100,1,100);
+   plane.setSize(10,1,10);
    objects.push(plane);
    var sphere = new Sphere(4);
-   sphere.setSize(0.15,0.15,0.15);
+   //sphere.setSize(0.15,0.15,0.15);
    sphere.setLocation(-0.5,0.15,0);
    objects.push(sphere);
    var cube = new Cube();
@@ -141,13 +141,16 @@ function render() {
       var pos = camera.getPosition();
       flashlight.setLocation(pos[0], pos[1], pos[2]);
       var dir = camera.getDirection();
-      flashlight.setDirection(dir[0], dir[1], dir[2]);
+	  var dir2 = carCamera.getDirection();
+	  flashlight.setDirection(dir2[0], 0, dir2[2]);
+	  flashlight.setLocation(...car.getLocation());
 	  if (useCarCamera) {
 		car.setLocation(...add(car.getLocation(), mult(vec3(forwardAmt*0.1, 0, forwardAmt*0.1), dir)));
-		car.updateRotationsDelta(0, -rightAmt, 0);
-	    camera.setAt(...car.getLocation());
+		car.updateRotationsDelta(0, -rightAmt*2, 0);
 		var cameraRad = car.yrot * (2*Math.PI/360);
-		camera.setPosition(...add(car.getLocation(), vec3(1 * Math.sin(cameraRad), 0.5, 1 * Math.cos(cameraRad))));
+		camera.setPosition(...add(car.getLocation(), vec3(0.25 * Math.sin(cameraRad), 0.25, 0.25 * Math.cos(cameraRad))));
+		camera.setAt(...add(car.getLocation(), vec3(0, 0.25, 0)));
+		//camera.setAt(...car.getLocation());
 	  }
       var cameraMat = camera.getCameraMatrix();
       var projMat = camera.getProjectionMatrix();
