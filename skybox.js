@@ -38,37 +38,37 @@ class Skybox {
          gl.bindTexture(gl.TEXTURE_CUBE_MAP, self.textureID);
          gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGB, this.width, this.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image1);
       };
-      image1.src = "textures/sky-top.jpg";
+      image1.src = "textures/up.jpg";
       var image2 = new Image();
       image2.onload = function(){
          gl.bindTexture(gl.TEXTURE_CUBE_MAP, self.textureID);
          gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGB, this.width, this.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image2);
       };
-      image2.src = "textures/sky-bottom.jpg";
+      image2.src = "textures/down.jpg";
       var image3 = new Image();
       image3.onload = function(){
          gl.bindTexture(gl.TEXTURE_CUBE_MAP, self.textureID);
          gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGB, this.width, this.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image3);
       };
-      image3.src = "textures/sky-back.jpg";
+      image3.src = "textures/back.jpg";
       var image4 = new Image();
       image4.onload = function(){
          gl.bindTexture(gl.TEXTURE_CUBE_MAP, self.textureID);
          gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGB, this.width, this.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image4);
       };
-      image4.src = "textures/sky-left.jpg";
+      image4.src = "textures/left.jpg";
       var image5 = new Image();
       image5.onload = function(){
          gl.bindTexture(gl.TEXTURE_CUBE_MAP, self.textureID);
          gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGB, this.width, this.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image5);
       };
-      image5.src = "textures/sky-front.jpg";
+      image5.src = "textures/front.jpg";
       var image6 = new Image();
       image6.onload = function(){
          gl.bindTexture(gl.TEXTURE_CUBE_MAP, self.textureID);
          gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGB, this.width, this.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image6);
       };
-      image6.src = "textures/sky-right.jpg";
+      image6.src = "textures/right.jpg";
    }
    build() {
       var vertices = [

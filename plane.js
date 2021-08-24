@@ -1,6 +1,6 @@
 class Plane extends glObject { 
    constructor(subdivs){
-	  super("textures/256x grass block.png");
+	  super("textures/vaporgrid.png");
 	  this.numVertices = (4**(subdivs))*6;
 
       this.vPositions = [];

@@ -50,9 +50,6 @@ class OBJLoader extends glObject {
 				     } else {
 					    this.vNormals.push(N);
 				     }
-					 if (this.vNormals[this.vNormals.length - 1] === undefined) {
-					 console.log(this.vNormals[this.vNormals.length - 1]);
-					 }
 				     this.vPositions.push(b);
 				     this.vTexs.push(vtxtures[parseInt(pos2[1])-1]);
 				     if (pos2.length == 3) {
@@ -60,9 +57,6 @@ class OBJLoader extends glObject {
 				     } else {
 					    this.vNormals.push(N);
 				     }
-					 if (this.vNormals[this.vNormals.length - 1] === undefined) {
-					 console.log(this.vNormals[this.vNormals.length - 1]);
-					 }
 				     this.vPositions.push(c);
 				     this.vTexs.push(vtxtures[parseInt(pos3[1])-1]);
 				     if (pos3.length == 3) {
@@ -70,9 +64,6 @@ class OBJLoader extends glObject {
 				     } else {
 					    this.vNormals.push(N);
 				     }
-					 if (this.vNormals[this.vNormals.length - 1] === undefined) {
-					 console.log(this.vNormals[this.vNormals.length - 1]);
-					 }
 			     }
                break;
          }

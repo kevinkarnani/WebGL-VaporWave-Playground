@@ -102,6 +102,7 @@ window.onload = function init(){
    flashlight.setType(1);
    flashlight.setAmbient(1.0, 1.0, 1.0);
    var plane = new Plane(5);
+   plane.setSize(100,1,100);
    objects.push(plane);
    var sphere = new Sphere(4);
    sphere.setSize(0.15,0.15,0.15);
