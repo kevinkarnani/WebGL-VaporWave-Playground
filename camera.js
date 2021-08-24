@@ -5,8 +5,6 @@ class Camera {
       this.u = vec3(1,0,0);
       this.v = vec3(0,1,0);
       this.n = vec3(0,0,1);
-
-      this.updateCamMatrix();
    }
 
    getPosition() {
@@ -15,6 +13,14 @@ class Camera {
    
    getDirection() {
       return mult(-1.0, this.n);
+   }
+   
+   update(forward, right, roll, pitch, yaw) {
+      this.moveForward(forward*0.01);
+      this.moveRight(right*0.01);
+      this.roll(roll*0.5);
+      this.pitch(pitch*0.5);
+      this.yaw(yaw*0.5);
    }
 
    getCameraMatrix() {

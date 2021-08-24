@@ -1,5 +1,8 @@
 class glObject { 
    constructor(texture_path){
+	  this.xrot = 0;
+	  this.yrot = 0;
+	  this.zrot = 0;
       //  Load shaders and initialize attribute buffers
       this.program = initShaders( gl, "/vshader.glsl", "/fshader.glsl" );
       gl.useProgram( this.program );
@@ -165,23 +168,38 @@ class glObject {
       this.modelMatrix = mult(this.locationMatrix, mult(this.sizeMatrix, rotationMatrix));
    }
    setLocation(x, y, z) {
+	  this.location = vec3(x,y,z);
       this.locationMatrix = translate(x,y,z); 
       this.updateModelMatrix();
+   }
+   getLocation() {
+	   return this.location;
    }
    setSize(x, y, z) {
       this.sizeMatrix = scale(x,y,z); 
       this.updateModelMatrix();
    }
    setZRotation(deg) {
+	  this.zrot = deg;
       this.rotationZMatrix = rotateZ(deg); 
       this.updateModelMatrix();
    }
    setYRotation(deg) {
+	  this.yrot = deg;
       this.rotationYMatrix = rotateY(deg);
       this.updateModelMatrix();
    }
    setXRotation(deg) {
+	  this.xrot = deg;
       this.rotationXMatrix = rotateX(deg); 
       this.updateModelMatrix();
+   }
+   updateRotationsDelta(x, y, z) {
+      this.xrot += x;
+	  this.yrot += y;
+	  this.zrot += z;
+	  this.setXRotation(this.xrot);
+	  this.setYRotation(this.yrot);
+	  this.setZRotation(this.zrot);
    }
 }
