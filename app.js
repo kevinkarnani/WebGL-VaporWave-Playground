@@ -121,7 +121,7 @@ window.onload = function init(){
    car.setSize(0.001, 0.001, 0.001);
    car.setLocation(0,0.05,0);
    objects.push(car);
-   for (var i = 0; i < 100; i++) {
+   for (var i = 0; i < 50; i++) {
 	  var mountains;
       mountains = new Mountains(1);
       mountains.setSize(Math.random()*0.5 + 0.5, 1, Math.random()*0.5 + 0.5);
