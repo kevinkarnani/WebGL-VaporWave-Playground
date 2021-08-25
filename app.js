@@ -6,6 +6,7 @@ var globalCamera;
 var carCamera;
 var skybox;
 var car;
+var camera;
 var objects = [];
 
 var useCarCamera = false;
@@ -14,6 +15,18 @@ var pitchAmt = 0;
 var yawAmt = 0;
 var forwardAmt = 0;
 var rightAmt = 0;
+var xclip = 0;
+var yclip = 0;
+
+function mousedownHandler(event) {
+	// Implementing picking
+	xclip = 2 * (event.clientX/canvas.width) - 1;
+	yclip = 1 - 2 * (event.clientY/canvas.height);
+	var pfront = vec4(xclip, yclip, -1, 1);
+	var pcam = mult(inverse(camera.getProjectionMatrix()), pfront);
+	var pworld = mult(inverse(camera.getCameraMatrix()), pcam);
+	objects.forEach(o => o.testCollision(pworld));
+}
 
 function keydownHandler(event) {
    switch (event.keyCode) {
@@ -21,6 +34,12 @@ function keydownHandler(event) {
          break;
       case 32: // Space key
 	     useCarCamera = !useCarCamera;
+	     if (useCarCamera) {
+		   camera = carCamera;
+	     }
+		 else {
+		   camera = globalCamera;
+		 }
          break;
       case 38: // Forward arrow
          forwardAmt = 1;
@@ -83,6 +102,7 @@ function keyupHandler(event) {
 window.onload = function init(){
    window.addEventListener("keydown", keydownHandler);
    window.addEventListener("keyup", keyupHandler);
+   window.addEventListener("mousedown", mousedownHandler);
    canvas = document.getElementById( "gl-canvas" );
    // preserveDrawingBuffer allows for this to work on Chrome
    // Otherwise, the render buffer can get cleared between calls to draw()
@@ -98,6 +118,7 @@ window.onload = function init(){
    
    globalCamera = new Camera();
    globalCamera.pitch(45);
+   camera = globalCamera;
    carCamera = new CarCamera();
    sun = new Light();
    sun.setLocation(0,0,10);
@@ -148,10 +169,6 @@ function render() {
    setTimeout(function() {
       gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
       requestAnimationFrame(render);
-	  var camera = globalCamera;
-	  if (useCarCamera) {
-		camera = carCamera;
-	  }
       camera.update(forwardAmt, rightAmt, rollAmt, pitchAmt, yawAmt);
       var pos = camera.getPosition();
       flashlight.setLocation(pos[0], pos[1], pos[2]);

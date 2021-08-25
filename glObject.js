@@ -3,6 +3,7 @@ class glObject {
 	  this.xrot = 0;
 	  this.yrot = 0;
 	  this.zrot = 0;
+	  this.pickable = false;
       //  Load shaders and initialize attribute buffers
       this.program = initShaders( gl, "/vshader.glsl", "/fshader.glsl" );
       gl.useProgram( this.program );
@@ -201,5 +202,30 @@ class glObject {
 	  this.setXRotation(this.xrot);
 	  this.setYRotation(this.yrot);
 	  this.setZRotation(this.zrot);
+   }
+   testCollision(ray) {
+	   if (this.pickable) {
+		   for (var i = 0; i < this.numVertices; i += 3) {
+			    var e = this.vPositions[i];
+				var f = this.vPositions[i+1];
+				var g = this.vPositions[i+2];
+				if (this.testCollisionTriangle(ray, e, f, g)) {
+					console.log("picked!");
+					break;
+				}
+		   }
+	   }
+   }
+   testCollisionTriangle(v, e, f, g) {
+	   var ve = mult(this.modelMatrix, e);
+	   var vf = mult(this.modelMatrix, f);
+	   var vg = mult(this.modelMatrix, g);
+	   var N = cross(subtract(vf, ve), subtract(vg, ve));
+	   if (dot(v, N) === 0) {
+		  return false;
+	   }
+	   var Q = vec4(0,0,0,0);
+	   var alpha = -((dot(Q, N) + dot(mult(-1, ve), N)/dot(ray, N)));
+	   return (alpha < 0);
    }
 }
