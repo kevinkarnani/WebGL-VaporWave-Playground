@@ -46,6 +46,9 @@ function keydownHandler(event) {
    if (!event.metaKey) {
       switch (event.keyCode) {
          case 83: // s key
+		    var dolphin = new Dolphin();
+	        dolphin.setSize(0.01, 0.01, 0.01);
+	        objects.push(dolphin);
             break;
          case 32: // Space key
          useCarCamera = !useCarCamera;
@@ -220,12 +223,6 @@ function render() {
       gl.disable(gl.DEPTH_TEST);
       skybox.draw(camera, projMat);
       gl.enable(gl.DEPTH_TEST);
-	  var num_dolphins = objects.filter(o => o instanceof Dolphin).length;
-	  if (num_dolphins < 5 && Math.random() < 0.05) {
-		  var dolphin = new Dolphin();
-	      dolphin.setSize(0.01, 0.01, 0.01);
-	      objects.push(dolphin);
-	  }
 	  objects = objects.filter(o => !(o.canDelete));
 	  objects.forEach(o => o.draw(cameraMat, projMat));
       gl.cullFace(gl.BACK);
