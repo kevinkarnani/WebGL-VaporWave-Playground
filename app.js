@@ -234,9 +234,29 @@ window.onload = function init() {
         dolphin.setSize(0.01, 0.01, 0.01);
         objects.push(dolphin);
     }
-    var fiji = new Fiji();
-    fiji.setSize(0.002, 0.002, 0.002);
-    objects.push(fiji);
+	for (var i = 0; i < 10; i++) {
+		var fiji = new Fiji();
+		fiji.setSize(0.002, 0.002, 0.002);
+		objects.push(fiji);
+	}
+	for (var i = 0; i < 10; i++) {
+		var palm = new Palm();
+		palm.setSize(0.3, 0.3, 0.3);
+		palm.setLocation(Math.random() * -5, 0, Math.random() * 10 - 5);
+		objects.push(palm);
+	}
+	for (var i = 0; i < 10; i++) {
+		var palm = new Palm();
+		palm.setSize(0.3, 0.3, 0.3);
+		palm.setLocation(Math.random() * 5 + 5, 0, Math.random() * 10 - 5);
+		objects.push(palm);
+	}
+	for (var i = 0; i < 10; i++) {
+		var palm = new Palm();
+		palm.setSize(0.3, 0.3, 0.3);
+		palm.setLocation(Math.random() * 5, 0, Math.random() * -5);
+		objects.push(palm);
+	}
     skybox = new Skybox();
     render();
 };

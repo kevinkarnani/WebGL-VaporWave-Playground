@@ -47,32 +47,38 @@ class OBJLoader extends glObject {
 						 N = vec3(0, 0, 0);
 					 }
 					 this.vPositions.push(a);
-				     this.vTexs.push(vtxtures[parseInt(pos1[1])-1]);
+					 if (pos1[1] === "") {
+						this.vTexs.push(vec2(0,0));
+					 } else {
+				        this.vTexs.push(vtxtures[parseInt(pos1[1])-1]);
+					 }
 				     if (pos1.length == 3) {
 					    this.vNormals.push(vnormals[parseInt(pos1[2])-1]);
 				     } else {
 					    this.vNormals.push(N);
 				     }
 				     this.vPositions.push(b);
-				     this.vTexs.push(vtxtures[parseInt(pos2[1])-1]);
+					 if (pos2[1] === "") {
+						this.vTexs.push(vec2(0,1));
+					 } else {
+				        this.vTexs.push(vtxtures[parseInt(pos2[1])-1]);
+					 }
 				     if (pos2.length == 3) {
 					    this.vNormals.push(vnormals[parseInt(pos2[2])-1]);
 				     } else {
 					    this.vNormals.push(N);
 				     }
 				     this.vPositions.push(c);
-				     this.vTexs.push(vtxtures[parseInt(pos3[1])-1]);
+					 if (pos3[1] === "") {
+						this.vTexs.push(vec2(1,1));
+					 } else {
+				        this.vTexs.push(vtxtures[parseInt(pos3[1])-1]);
+					 }
 				     if (pos3.length == 3) {
 					    this.vNormals.push(vnormals[parseInt(pos3[2])-1]);
 				     } else {
 					    this.vNormals.push(N);
 				     }
-					 if (line <= 197930 && line >= 197920) {
-						if (N.includes(NaN)) {
-							console.log(`Line: ${line}`);
-							console.log(a, b, c);
-						}
-					}
 			     }
                break;
          }
