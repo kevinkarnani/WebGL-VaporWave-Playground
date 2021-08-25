@@ -29,51 +29,53 @@ function mousedownHandler(event) {
 }
 
 function keydownHandler(event) {
-   switch (event.keyCode) {
-      case 83: // s key
-         break;
-      case 32: // Space key
-	     useCarCamera = !useCarCamera;
-	     if (useCarCamera) {
-		   camera = carCamera;
-	     }
-		 else {
-		   camera = globalCamera;
-		 }
-         break;
-      case 38: // Forward arrow
-         forwardAmt = 1;
-         break;
-      case 40: // Backward arrow
-         forwardAmt = -1;
-         break;
-      case 39: // Right arrow
-         rightAmt = 1;
-         break;
-      case 37: // Left arrow
-         rightAmt = -1;
-         break;
-      case 90: // z key
-         if (event.shiftKey) {
-            rollAmt = 1; // Counterclockwise
-         } else {
-            rollAmt = -1; // Clockwise
+   if (!event.metaKey) {
+      switch (event.keyCode) {
+         case 83: // s key
+            break;
+         case 32: // Space key
+         useCarCamera = !useCarCamera;
+         if (useCarCamera) {
+            camera = carCamera;
          }
-         break;
-      case 88: // x key
-         if (event.shiftKey) {
-            pitchAmt = -1; // Up
-         } else {
-            pitchAmt = 1; // Down
+         else {
+            camera = globalCamera;
          }
-         break;
-      case 67: // c key
-         if (event.shiftKey) {
-            yawAmt = 1; // Counterclockwise
-         } else {
-            yawAmt = -1; // Clockwise
-         }
-         break;
+            break;
+         case 38: // Forward arrow
+            forwardAmt = 1;
+            break;
+         case 40: // Backward arrow
+            forwardAmt = -1;
+            break;
+         case 39: // Right arrow
+            rightAmt = 1;
+            break;
+         case 37: // Left arrow
+            rightAmt = -1;
+            break;
+         case 90: // z key
+            if (event.shiftKey) {
+               rollAmt = 1; // Counterclockwise
+            } else {
+               rollAmt = -1; // Clockwise
+            }
+            break;
+         case 88: // x key
+            if (event.shiftKey) {
+               pitchAmt = -1; // Up
+            } else {
+               pitchAmt = 1; // Down
+            }
+            break;
+         case 67: // c key
+            if (event.shiftKey) {
+               yawAmt = 1; // Counterclockwise
+            } else {
+               yawAmt = -1; // Clockwise
+            }
+            break;
+      }
    }
 }
 
