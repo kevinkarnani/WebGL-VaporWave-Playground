@@ -1,9 +1,9 @@
 class Pyramid extends glObject {
     constructor() {
         // super("./textures/marble.jpeg");
-        super("./textures/Burlick_Matt.jpeg");
+        super("./textures/marble.jpg");
 
-        this.numVertices = 18;
+        this.numVertices = 24;
 
         this.vPositions = [];
         this.vNormals = [];
@@ -14,20 +14,24 @@ class Pyramid extends glObject {
 
     build() {
         var vertices = [
-            vec3(-1, 0, 1),
-            vec3(1, 0, 1),
-            vec3(-1, 0, -1),
-            vec3(1, 0, -1),
-            vec3(0, 1, 0)
+            vec3(-1, 0, 1), // Front left 0
+            vec3(1, 0, 1),  // Front right 1
+            vec3(-1, 0, -1), // Back left 2
+            vec3(1, 0, -1), // Back right 3
+            vec3(0, 1, 1), // Front top 4
+			vec3(0, 1, -1), // Back top 5
         ];
 
+		// 2 + 2 + 2 + 1 + 1 = 8 triangles
         var indices = [
-            0, 1, 3,
-            0, 3, 2,
-            3, 1, 4,
-            3, 4, 2,
-            0, 2, 4,
-            0, 4, 1
+            0, 1, 3, // FL -> FR -> BR (Base 1)
+            0, 3, 2, // FL -> BR -> BL (Base 2)
+            3, 1, 4, // BR -> FR -> FT (Right 1)
+			3, 4, 5, // BR -> FT -> BT (Right 2)
+            0, 2, 4, // FL -> BL -> FT (Left 1)
+			2, 5, 4, // BL -> BT -> FT (Left 2)
+            4, 0, 1, // FT -> FL -> FR (Front)
+			5, 3, 2, // BT -> BR -> BL (Back)
         ];
 
         for (var i=0; i<indices.length; i+=3) {
@@ -37,21 +41,9 @@ class Pyramid extends glObject {
 
     triangle(a,b,c) {
         var t1, t2, t3;
-        var i;
-        var j;
-        if (a[0] == b[0] && b[0] == c[0]) {
-           i = 1;
-           j = 2;
-        } else if (a[1] == b[1] && b[1] == c[1]) {
-           i = 0;
-           j = 2;
-        } else {
-           i = 0;
-           j = 1;
-        }
-        t1 = vec2((a[i]+1.0)/2.0, (a[j]+1.0)/2.0);
-        t2 = vec2((b[i]+1.0)/2.0, (b[j]+1.0)/2.0);
-        t3 = vec2((c[i]+1.0)/2.0, (c[j]+1.0)/2.0);
+        t1 = vec2(0, 0);
+        t2 = vec2(0, 1);
+        t3 = vec2(1, 1);
         var N = normalize(cross(subtract(b,a), subtract(c,a)));
         this.vPositions.push(vec4(a[0],a[1],a[2],1.0));
         this.vNormals.push(N);

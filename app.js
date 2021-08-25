@@ -143,11 +143,10 @@ window.onload = function init() {
     globalCamera = new Camera();
     globalCamera.pitch(45);
     camera = globalCamera;
-    // get trolled kek
-    camera.eye = vec3(2.94922331415928, -0.07186930389014051, 0.8402009231580996);
-    camera.n = vec3(0.02294257315652217, -0.9797742832195558, -0.19878629801513847);
-    camera.u = vec3(-0.998629534754574, -0.013103876936301611, -0.05066893254353733);
-    camera.v = vec3(0.047039245878531484, 0.1996763439940839, -0.9787321732712865);
+    //camera.eye = vec3(2.94922331415928, -0.07186930389014051, 0.8402009231580996);
+    //camera.n = vec3(0.02294257315652217, -0.9797742832195558, -0.19878629801513847);
+    //camera.u = vec3(-0.998629534754574, -0.013103876936301611, -0.05066893254353733);
+    //camera.v = vec3(0.047039245878531484, 0.1996763439940839, -0.9787321732712865);
     camera.updateCamMatrix();
     //comment the lines above
     carCamera = new CarCamera();
@@ -165,15 +164,28 @@ window.onload = function init() {
     //sphere.setSize(0.15,0.15,0.15);
     //sphere.setLocation(-0.5,0.15,0);
     //objects.push(sphere);
-    //var cube = new Cube();
-    //cube.setSize(0.1,0.1,0.1);
-    //cube.setLocation(0.5,0.1,0);
-    //objects.push(cube);
-    for (var i = 0; i < 10; i++) {
+    var base = new Cube();
+    base.setSize(0.1,0.1,0.1);
+    base.setLocation(0.5,0.1,0);
+    objects.push(base);
+    for (var i = 0; i < 8; i++) {
       // top left to top right
       cylinder = new Cylinder();
       cylinder.setSize(.2, 5, .2);
       cylinder.setLocation(0.5 + 0.5 * i, 0.1, 0);
+      objects.push(cylinder);
+	  // bottom right to bottom left
+      cylinder = new Cylinder();
+      cylinder.setSize(.2, 5, .2);
+      cylinder.setLocation(0.5 + 0.5 * i, 0.1, 8.5);
+      objects.push(cylinder);
+    }
+
+    for (var i = 0; i < 17; i++) {
+      // top right to bottom right
+      cylinder = new Cylinder();
+      cylinder.setSize(.2, 5, .2);
+      cylinder.setLocation(4.5, 0.1, 0 + 0.5 * i);
       objects.push(cylinder);
       // top left to bottom left
       cylinder = new Cylinder();
@@ -182,22 +194,9 @@ window.onload = function init() {
       objects.push(cylinder);
     }
 
-    for (var i = 0; i < 10; i++) {
-      // top right to bottom right
-      cylinder = new Cylinder();
-      cylinder.setSize(.2, 5, .2);
-      cylinder.setLocation(5, 0.1, 0 + 0.5 * i);
-      objects.push(cylinder);
-      // bottom right to bottom left
-      cylinder = new Cylinder();
-      cylinder.setSize(.2, 5, .2);
-      cylinder.setLocation(5 - 0.5 * i, 0.1, 4.5);
-      objects.push(cylinder);
-    }
-
     pyramid = new Pyramid();
-    pyramid.setLocation(2.75, 2.6, 2.25);
-    pyramid.setSize(2.35, 3, 2.35);
+    pyramid.setLocation(0.5 + 0.5 * 4, 2.6, 0 + 0.5 * 8.5);
+    pyramid.setSize(2.35, 1.5, 2.35*2);
     objects.push(pyramid);
     
     var statue = new Statue()

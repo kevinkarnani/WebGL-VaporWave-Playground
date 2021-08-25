@@ -1,6 +1,6 @@
 class Cylinder extends glObject {
     constructor() {
-        super("./textures/marble.jpeg");
+        super("./textures/marble.jpg");
 
         this.vPositions = [];
         this.vNormals = [];
