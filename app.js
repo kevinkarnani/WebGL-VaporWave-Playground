@@ -210,6 +210,9 @@ window.onload = function init() {
     car.setSize(0.001, 0.001, 0.001);
     car.setLocation(0, 0.05, 0);
 	car.reflect = true;
+	var cameraRad = car.yrot * (2 * Math.PI / 360);
+    carCamera.setPosition(...add(car.getLocation(), vec3(-0.25 * Math.sin(cameraRad), 0.25, -0.25 * Math.cos(cameraRad))));
+    carCamera.setAt(...add(car.getLocation(), vec3(0, 0.25, 0)));
     objects.push(car);
     for (var i = 0; i < 25; i++) {
         var mountains;
@@ -267,7 +270,6 @@ function render() {
         requestAnimationFrame(render);
         camera.update(forwardAmt, rightAmt, rollAmt, pitchAmt, yawAmt);
         var pos = camera.getPosition();
-        flashlight.setLocation(pos[0], pos[1], pos[2]);
         var dir = camera.getDirection();
         var dir2 = carCamera.getDirection();
         flashlight.setDirection(dir2[0], 0, dir2[2]);
@@ -276,7 +278,7 @@ function render() {
             car.setLocation(...add(car.getLocation(), mult(vec3(forwardAmt * 0.1, 0, forwardAmt * 0.1), dir)));
             car.updateRotationsDelta(0, -rightAmt * 2, 0);
             var cameraRad = car.yrot * (2 * Math.PI / 360);
-            camera.setPosition(...add(car.getLocation(), vec3(0.25 * Math.sin(cameraRad), 0.25, 0.25 * Math.cos(cameraRad))));
+            camera.setPosition(...add(car.getLocation(), vec3(-0.25 * Math.sin(cameraRad), 0.25, -0.25 * Math.cos(cameraRad))));
             camera.setAt(...add(car.getLocation(), vec3(0, 0.25, 0)));
             //camera.setAt(...car.getLocation());
         }

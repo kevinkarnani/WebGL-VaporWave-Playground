@@ -17,11 +17,11 @@ class Camera {
    }
    
    update(forward, right, roll, pitch, yaw) {
-      this.moveForward(forward*0.01);
-      this.moveRight(right*0.01);
-      this.roll(roll*0.5);
-      this.pitch(pitch*0.5);
-      this.yaw(yaw*0.5);
+      this.moveForward(forward*0.1);
+      this.moveRight(right*0.1);
+      this.roll(roll*1);
+      this.pitch(pitch*1);
+      this.yaw(yaw*1);
    }
 
    getCameraMatrix() {
