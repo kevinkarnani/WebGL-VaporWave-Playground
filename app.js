@@ -209,6 +209,7 @@ window.onload = function init() {
     car = new OBJLoader("models/cybertruck.obj", "textures/metal.jpg");
     car.setSize(0.001, 0.001, 0.001);
     car.setLocation(0, 0.05, 0);
+	car.reflect = true;
     objects.push(car);
     for (var i = 0; i < 25; i++) {
         var mountains;
@@ -236,7 +237,6 @@ window.onload = function init() {
     }
 	for (var i = 0; i < 10; i++) {
 		var fiji = new Fiji();
-		fiji.setSize(0.002, 0.002, 0.002);
 		objects.push(fiji);
 	}
 	for (var i = 0; i < 10; i++) {

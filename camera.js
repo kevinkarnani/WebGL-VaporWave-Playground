@@ -5,6 +5,7 @@ class Camera {
       this.u = vec3(1,0,0);
       this.v = vec3(0,1,0);
       this.n = vec3(0,0,1);
+	  this.project_matrix = perspective(45, canvas.width/canvas.height, 0.1, 100);
    }
 
    getPosition() {
@@ -28,7 +29,7 @@ class Camera {
    }
 
    getProjectionMatrix() {
-      return perspective(45, canvas.width/canvas.height, 0.1, 100);
+      return this.project_matrix;
    }
 
    moveForward(amt) {

@@ -1,13 +1,15 @@
 class glObject {
    constructor(texture_path) {
+	   this.location = vec3(0,0,0);
        this.xrot = 0;
        this.yrot = 0;
        this.zrot = 0;
        this.pickable = false;
        this.picked = false;
        this.canDelete = false;
+	   this.reflect = false;
        //  Load shaders and initialize attribute buffers
-       this.program = initShaders(gl, "/vshader.glsl", "/fshader.glsl");
+       this.program = initShaders(gl, "/vshader_env.glsl", "/fshader_env.glsl");
        gl.useProgram(this.program);
 
        this.modelMatrix = mat4();
@@ -26,6 +28,7 @@ class glObject {
        this.shininess = 80.0;
 
        this.useVertex = gl.getUniformLocation(this.program, "useVertex");
+	   this.useReflection = gl.getUniformLocation(this.program, "useReflection");
 
        this.lightPos1 = gl.getUniformLocation(this.program, "lightPos1");
        this.lightDir1 = gl.getUniformLocation(this.program, "lightDir1");
@@ -52,7 +55,8 @@ class glObject {
        this.matAmb = gl.getUniformLocation(this.program, "matAmbient");
        this.matAlpha = gl.getUniformLocation(this.program, "matAlpha");
 
-       this.useTexture = gl.getUniformLocation(this.program, "useTexture");
+       this.textureUnit = gl.getUniformLocation(this.program, "textureUnit");
+	   this.textureSampler = gl.getUniformLocation(this.program, "textureID");
        var TEXTURE = new Image();
        var self = this;
        TEXTURE.onload = function() {
@@ -63,9 +67,43 @@ class glObject {
            gl.generateMipmap(gl.TEXTURE_2D);
            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+		   gl.bindTexture(gl.TEXTURE_2D, null);
        }
        //this.textureUnit = gl.getUniformLocation(this.program, "textureUnit");
        TEXTURE.src = texture_path;
+	   
+	   this.envTextureID = gl.createTexture();
+	   gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.envTextureID);
+	   gl.texParameterf(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameterf(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameterf(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameterf(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texParameterf(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+		gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+		gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+		gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+		gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+		gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+		gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+		this.envFrameBuffer = gl.createFramebuffer();
+		this.envFrameBuffer.width = 256;
+		this.envFrameBuffer.height = 256;
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.envFrameBuffer);
+		this.envRenderBuffer = gl.createRenderbuffer();
+		gl.bindRenderbuffer(gl.RENDERBUFFER, this.envRenderBuffer);
+		gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 256, 256);
+		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.envRenderBuffer);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, this.envTextureID, 0);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_Z, this.envTextureID, 0);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, this.envTextureID, 0);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_Y, this.envTextureID, 0);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_NEGATIVE_X, this.envTextureID, 0);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_X, this.envTextureID, 0);
+		var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+		if(status !== gl.FRAMEBUFFER_COMPLETE) console.log(status);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null); //restore to window frame/depth buffer
+		gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
    }
    bindVertices() {
        this.vID = gl.createBuffer();
@@ -110,8 +148,17 @@ class glObject {
            this.vNormals[i] = mult(1.0 / counts[i], normalSum[i]);
        }
    }
-   draw(camera, projection) {
-       gl.useProgram(this.program);
+   render(camera, projection) {
+	   gl.useProgram(this.program);
+	   if (this.reflect) {
+		   this.createEnvironmentMap();
+		   gl.useProgram(this.program);
+		   gl.activeTexture(gl.TEXTURE1);
+		   gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.envTextureID);
+	   } else {
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, this.textureID);
+	   }
 
        //point the attributes to the buffer
        gl.bindBuffer(gl.ARRAY_BUFFER, this.vID);
@@ -120,9 +167,10 @@ class glObject {
        gl.vertexAttribPointer(this.aNormal, 3, gl.FLOAT, false, 0, 0);
        gl.bindBuffer(gl.ARRAY_BUFFER, this.tID);
        gl.vertexAttribPointer(this.aTexs, 2, gl.FLOAT, false, 0, 0);
-       gl.activeTexture(gl.TEXTURE0);
-       gl.bindTexture(gl.TEXTURE_2D, this.textureID);
+	   gl.uniform1i(this.textureUnit, 1);
+	   gl.uniform1i(this.textureSampler, 0);
        gl.uniform1f(this.useVertex, 0.0);
+	   gl.uniform1f(this.useReflection, this.reflect);
 
        //adding in sun and flashlight
        gl.uniform4fv(this.lightPos1, sun.position);
@@ -145,8 +193,6 @@ class glObject {
        gl.uniform1i(this.lightType2, flashlight.type);
        gl.uniform1f(this.lightOff2, flashlight.off);
 
-       gl.uniform1f(this.useTexture, 1.0);
-
        //material properties
        gl.uniform4fv(this.matSpec, this.specular);
        gl.uniform4fv(this.matDiff, this.diffuse);
@@ -165,6 +211,77 @@ class glObject {
        gl.disableVertexAttribArray(this.aTexs);
        gl.disableVertexAttribArray(this.aNormal);
        gl.disableVertexAttribArray(this.aPosition);
+	   if (this.reflect) {
+		   gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+	   } else {
+		   gl.bindTexture(gl.TEXTURE_2D, null);
+	   }
+   }
+   draw(camera, projection) {
+       this.render(camera, projection);
+   }
+   
+      createEnvironmentMap() {
+	   var viewportParams = gl.getParameter(gl.VIEWPORT);
+	   gl.bindFramebuffer(gl.FRAMEBUFFER, this.envFrameBuffer);
+	   gl.bindRenderbuffer(gl.RENDERBUFFER, this.envRenderBuffer);
+	   //gl.activeTexture(gl.TEXTURE1);
+	   //gl.bindTexture(gl.TEXTURE_CUBE_MAP,this.envTextureID);
+	   gl.viewport(0,0,256,256);
+	   var proj_matrix = perspective(90, 1.0, 0.1, 100);
+	   var cam = new Camera();
+       cam.eye = vec3(this.location[0], this.location[1], this.location[2]);
+	   for(var j = 0; j < 6; j++){
+		    gl.useProgram(this.program);
+			switch(j){
+				case 0: //-z
+				cam.u = vec3(-1,0,0);
+				cam.v = vec3(0,-1,0);
+				cam.n = vec3(0,0,1);
+				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, this.envTextureID, 0);
+				break;
+				case 1: //+z
+				cam.u = vec3(1,0,0);
+				cam.v = vec3(0,-1,0);
+				cam.n = vec3(0,0,-1);
+				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_Z, this.envTextureID, 0);
+				break;
+				case 2: //-y
+				cam.u = vec3(1,0,0);
+				cam.v = vec3(0,0,-1);
+				cam.n = vec3(0,1,0);
+				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, this.envTextureID, 0);
+				break;
+				case 3: //+y
+				cam.u = vec3(1,0,0);
+				cam.v = vec3(0,0,1);
+				cam.n = vec3(0,-1,0);
+				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_Y, this.envTextureID, 0);
+				break;
+				case 4: //-x
+				cam.u = vec3(0,0,1);
+				cam.v = vec3(0,-1,0);
+				cam.n = vec3(1,0,0);
+				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_NEGATIVE_X, this.envTextureID, 0);
+				break;
+				case 5: //+x
+				cam.u = vec3(0,0,-1);
+				cam.v = vec3(0,-1,0);
+				cam.n = vec3(-1,0,0);
+				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_X, this.envTextureID, 0);
+				break;
+			}
+			cam.updateCamMatrix();
+			gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+			for(var i = 0; i < objects.length; i++) {
+			    if(objects[i]!=this) { objects[i].render(cam.getCameraMatrix(), proj_matrix); }
+			}
+			skybox.draw(cam, proj_matrix);
+			gl.useProgram(this.program);
+		}
+		gl.viewport(viewportParams[0], viewportParams[1], viewportParams[2], viewportParams[3]);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		gl.bindRenderbuffer(gl.RENDERBUFFER, null);
    }
 
    updateModelMatrix() {
