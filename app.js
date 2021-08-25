@@ -8,6 +8,7 @@ var skybox;
 var car;
 var camera;
 var cylinder;
+var pyramid;
 var objects = [];
 
 var useCarCamera = false;
@@ -187,7 +188,15 @@ window.onload = function init() {
       objects.push(cylinder);
     }
 
-
+    pyramid = new Pyramid();
+    pyramid.setLocation(2.75, 2.6, 2.25);
+    pyramid.setSize(2.35, 3, 2.35);
+    objects.push(pyramid);
+    
+    var statue = new Statue()
+    statue.setLocation(2.75, .1, 2.25);
+    statue.setSize(.01, .01, .01)
+    objects.push(statue);
     
     car = new OBJLoader("models/cybertruck.obj", "textures/metal.jpg");
     car.setSize(0.001, 0.001, 0.001);
