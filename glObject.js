@@ -205,17 +205,16 @@ class glObject {
 	  this.setZRotation(this.zrot);
    }
    testCollision(ray) {
+	   this.minT = null;
 	   if (this.pickable) {
 		   for (var i = 0; i < this.numVertices; i += 3) {
 			    var e = mult(this.modelMatrix, this.vPositions[i]);
 				var f = mult(this.modelMatrix, this.vPositions[i+1]);
 				var g = mult(this.modelMatrix, this.vPositions[i+2]);
-				if (this.testCollisionTriangle(ray, e, f, g)) {
-					this.onPick();
-					break;
-				}
+				this.testCollisionTriangle(ray, e, f, g);
 		   }
 	   }
+	   return this.minT;
    }
    onPick() {
 	   this.picked = true;
@@ -238,6 +237,13 @@ class glObject {
 	   var d1 = dot(N, cross(subtract(vf, ve), subtract(P, ve)));
 	   var d2 = dot(N, cross(subtract(vg, vf), subtract(P, vf)));
 	   var d3 = dot(N, cross(subtract(ve, vg), subtract(P, vg)));
-	   return (d1 >= 0) && (d2 >= 0) && (d3 >= 0);
+	   if ((d1 >= 0) && (d2 >= 0) && (d3 >= 0)) {
+		   if (this.minT === null || alpha < this.minT) {
+			   this.minT = alpha;
+		   }
+		   return true;
+	   } else {
+		   return false;
+	   }
    }
 }

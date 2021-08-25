@@ -28,7 +28,18 @@ function mousedownHandler(event) {
 	pcam[3] = 0;
 	var pworld = mult(inverse(camera.getCameraMatrix()), pcam);
 	var point = normalize(vec3(pworld[0], pworld[1], pworld[2]));
-	objects.forEach(o => o.testCollision(point));
+	var min_t = null;
+	var min_object = null;
+	objects.forEach(o => {
+		var t = o.testCollision(point);
+		if (t !== null && (min_t === null || t < min_t)) {
+			min_t = t;
+			min_object = o;
+		}
+	});
+	if (min_object !== null) {
+		min_object.onPick();
+	}
 }
 
 function keydownHandler(event) {
