@@ -143,6 +143,13 @@ window.onload = function init() {
     globalCamera = new Camera();
     globalCamera.pitch(45);
     camera = globalCamera;
+    // get trolled kek
+    camera.eye = vec3(2.94922331415928, -0.07186930389014051, 0.8402009231580996);
+    camera.n = vec3(0.02294257315652217, -0.9797742832195558, -0.19878629801513847);
+    camera.u = vec3(-0.998629534754574, -0.013103876936301611, -0.05066893254353733);
+    camera.v = vec3(0.047039245878531484, 0.1996763439940839, -0.9787321732712865);
+    camera.updateCamMatrix();
+    //comment the lines above
     carCamera = new CarCamera();
     sun = new Light();
     sun.setLocation(0, 0, 10);
@@ -195,8 +202,8 @@ window.onload = function init() {
     
     var statue = new Statue()
     statue.setLocation(2.75, .1, 2.25);
-    statue.setSize(.01, .01, .01)
-    objects.push(statue);
+    statue.setSize(.008, .008, .008)
+    // objects.push(statue);
     
     car = new OBJLoader("models/cybertruck.obj", "textures/metal.jpg");
     car.setSize(0.001, 0.001, 0.001);

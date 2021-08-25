@@ -1,6 +1,7 @@
 class Pyramid extends glObject {
     constructor() {
-        super("./textures/marble.jpeg");
+        // super("./textures/marble.jpeg");
+        super("./textures/Burlick_Matt.jpeg");
 
         this.numVertices = 18;
 
