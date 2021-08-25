@@ -206,26 +206,37 @@ class glObject {
    testCollision(ray) {
 	   if (this.pickable) {
 		   for (var i = 0; i < this.numVertices; i += 3) {
-			    var e = this.vPositions[i];
-				var f = this.vPositions[i+1];
-				var g = this.vPositions[i+2];
+			    var e = mult(this.modelMatrix, this.vPositions[i]);
+				var f = mult(this.modelMatrix, this.vPositions[i+1]);
+				var g = mult(this.modelMatrix, this.vPositions[i+2]);
 				if (this.testCollisionTriangle(ray, e, f, g)) {
-					console.log("picked!");
+					this.onPick();
 					break;
 				}
 		   }
 	   }
    }
+   onPick() {
+	   console.log("picked!");
+   }
    testCollisionTriangle(v, e, f, g) {
-	   var ve = mult(this.modelMatrix, e);
-	   var vf = mult(this.modelMatrix, f);
-	   var vg = mult(this.modelMatrix, g);
+	   var ve = vec3(e[0], e[1], e[2]);
+	   var vf = vec3(f[0], f[1], f[2]);
+	   var vg = vec3(g[0], g[1], g[2]);
+	   var ray = vec3(v[0], v[1], v[2]);
 	   var N = cross(subtract(vf, ve), subtract(vg, ve));
-	   if (dot(v, N) === 0) {
+	   if (dot(ray, N) === 0) {
 		  return false;
 	   }
-	   var Q = vec4(0,0,0,0);
-	   var alpha = -((dot(Q, N) + dot(mult(-1, ve), N)/dot(ray, N)));
-	   return (alpha < 0);
+	   var Q = camera.getPosition();
+	   var alpha = -((dot(Q, N) + dot(mult(-1, ve), N))/dot(ray, N));
+	   if (alpha < 0) {
+			return false;
+	   }
+	   var P = add(Q,mult(alpha, ray));
+	   var d1 = dot(N, cross(subtract(vf, ve), subtract(P, ve)));
+	   var d2 = dot(N, cross(subtract(vg, vf), subtract(P, vf)));
+	   var d3 = dot(N, cross(subtract(ve, vg), subtract(P, vg)));
+	   return (d1 >= 0) && (d2 >= 0) && (d3 >= 0);
    }
 }

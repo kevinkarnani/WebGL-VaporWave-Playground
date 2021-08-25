@@ -20,12 +20,15 @@ var yclip = 0;
 
 function mousedownHandler(event) {
 	// Implementing picking
-	xclip = 2 * (event.clientX/canvas.width) - 1;
-	yclip = 1 - 2 * (event.clientY/canvas.height);
+	xclip = 2 * (event.clientX/canvas.width) - 1.0;
+	yclip = 1.0 - 2 * (event.clientY/canvas.height);
 	var pfront = vec4(xclip, yclip, -1, 1);
 	var pcam = mult(inverse(camera.getProjectionMatrix()), pfront);
+	pcam[2] = -1;
+	pcam[3] = 0;
 	var pworld = mult(inverse(camera.getCameraMatrix()), pcam);
-	objects.forEach(o => o.testCollision(pworld));
+	var point = normalize(vec3(pworld[0], pworld[1], pworld[2]));
+	objects.forEach(o => o.testCollision(point));
 }
 
 function keydownHandler(event) {
@@ -144,7 +147,7 @@ window.onload = function init(){
    car.setSize(0.001, 0.001, 0.001);
    car.setLocation(0,0.05,0);
    objects.push(car);
-   for (var i = 0; i < 50; i++) {
+   for (var i = 0; i < 1; i++) {
 	  var mountains;
       mountains = new Mountains(1);
       mountains.setSize(Math.random()*0.5 + 0.5, 1, Math.random()*0.5 + 0.5);
