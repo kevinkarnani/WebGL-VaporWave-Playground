@@ -42,8 +42,11 @@ class OBJLoader extends glObject {
 				     var a = vertices[parseInt(pos1[0])-1];
 				     var b = vertices[parseInt(pos2[0])-1];
 				     var c = vertices[parseInt(pos3[0])-1];
-				     var N = normalize(cross(subtract(vec3(b[0],b[1],b[2]),vec3(a[0],a[1],a[2])), subtract(vec3(c[0],c[1],c[2]),vec3(a[0],a[1],a[2]))));
-				     this.vPositions.push(a);
+				     var N = cross(subtract(vec3(b[0],b[1],b[2]),vec3(a[0],a[1],a[2])), subtract(vec3(c[0],c[1],c[2]),vec3(a[0],a[1],a[2])));
+					 if (N.includes(NaN)) {
+						 N = vec3(0, 0, 0);
+					 }
+					 this.vPositions.push(a);
 				     this.vTexs.push(vtxtures[parseInt(pos1[1])-1]);
 				     if (pos1.length == 3) {
 					    this.vNormals.push(vnormals[parseInt(pos1[2])-1]);
@@ -64,6 +67,12 @@ class OBJLoader extends glObject {
 				     } else {
 					    this.vNormals.push(N);
 				     }
+					 if (line <= 197930 && line >= 197920) {
+						if (N.includes(NaN)) {
+							console.log(`Line: ${line}`);
+							console.log(a, b, c);
+						}
+					}
 			     }
                break;
          }
