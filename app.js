@@ -189,6 +189,9 @@ window.onload = function init(){
 	   dolphin.setSize(0.01, 0.01, 0.01);
 	   objects.push(dolphin);
    }
+   var fiji = new Fiji();
+   fiji.setSize(0.002, 0.002, 0.002);
+   objects.push(fiji);
    skybox = new Skybox();
    render();
 };
