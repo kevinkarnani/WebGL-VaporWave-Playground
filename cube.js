@@ -1,6 +1,6 @@
 class Cube extends glObject { 
    constructor(){
-	  super("textures/crate_texture.jpg");
+	  super("textures/marble.jpg");
       this.numVertices = 36;
 
       this.vPositions = [];

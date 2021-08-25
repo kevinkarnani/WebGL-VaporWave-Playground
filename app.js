@@ -164,10 +164,12 @@ window.onload = function init() {
     //sphere.setSize(0.15,0.15,0.15);
     //sphere.setLocation(-0.5,0.15,0);
     //objects.push(sphere);
-    var base = new Cube();
-    base.setSize(0.1,0.1,0.1);
-    base.setLocation(0.5,0.1,0);
-    objects.push(base);
+	for (var i = 0; i < 3; i++) {
+		var base = new Cube();
+		base.setSize(2.35 - 0.05*i, 0.05, 2.35*2 - 0.05*i);
+		base.setLocation(0.5 + 0.5 * 4,0.05*(i+1),0 + 0.5 * 8.5);
+		objects.push(base);
+	}
     for (var i = 0; i < 8; i++) {
       // top left to top right
       cylinder = new Cylinder();
@@ -200,21 +202,14 @@ window.onload = function init() {
     objects.push(pyramid);
     
     var statue = new Statue()
-    statue.setLocation(2.75, .1, 2.25);
+    statue.setLocation(0.5 + 0.5 * 4, 0.05*4, 0 + 0.5 * 8.5);
     statue.setSize(.008, .008, .008)
-    // objects.push(statue);
+    objects.push(statue);
     
     car = new OBJLoader("models/cybertruck.obj", "textures/metal.jpg");
     car.setSize(0.001, 0.001, 0.001);
     car.setLocation(0, 0.05, 0);
     objects.push(car);
-    for (var i = 0; i < 2; i++) {
-        var statue = new Statue();
-        var scale = Math.random() * (0.01 - 0.001) + 0.001;
-        statue.setSize(scale, scale, scale);
-        statue.setLocation(Math.random() * 10 - 5, 0, Math.random() * 10 - 5);
-        objects.push(statue);
-    }
     for (var i = 0; i < 25; i++) {
         var mountains;
         mountains = new Mountains(1);
