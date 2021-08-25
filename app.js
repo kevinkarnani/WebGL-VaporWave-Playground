@@ -147,7 +147,14 @@ window.onload = function init(){
    car.setSize(0.001, 0.001, 0.001);
    car.setLocation(0,0.05,0);
    objects.push(car);
-   for (var i = 0; i < 1; i++) {
+   for (var i = 0; i < 10; i++) {
+	   var statue = new Statue();
+	   var scale = Math.random()*(0.01 - 0.001) + 0.001;
+	   statue.setSize(scale, scale, scale);
+	   statue.setLocation(Math.random()*10 - 5, 0, Math.random()*10 - 5);
+	   objects.push(statue);
+   }
+   for (var i = 0; i < 25; i++) {
 	  var mountains;
       mountains = new Mountains(1);
       mountains.setSize(Math.random()*0.5 + 0.5, 1, Math.random()*0.5 + 0.5);

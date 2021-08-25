@@ -4,6 +4,7 @@ class glObject {
 	  this.yrot = 0;
 	  this.zrot = 0;
 	  this.pickable = false;
+	  this.picked = false;
       //  Load shaders and initialize attribute buffers
       this.program = initShaders( gl, "/vshader.glsl", "/fshader.glsl" );
       gl.useProgram( this.program );
@@ -217,7 +218,7 @@ class glObject {
 	   }
    }
    onPick() {
-	   console.log("picked!");
+	   this.picked = true;
    }
    testCollisionTriangle(v, e, f, g) {
 	   var ve = vec3(e[0], e[1], e[2]);
