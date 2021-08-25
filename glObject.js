@@ -5,6 +5,7 @@ class glObject {
 	  this.zrot = 0;
 	  this.pickable = false;
 	  this.picked = false;
+	  this.canDelete = false;
       //  Load shaders and initialize attribute buffers
       this.program = initShaders( gl, "/vshader.glsl", "/fshader.glsl" );
       gl.useProgram( this.program );

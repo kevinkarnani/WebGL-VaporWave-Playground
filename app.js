@@ -158,7 +158,7 @@ window.onload = function init(){
    car.setSize(0.001, 0.001, 0.001);
    car.setLocation(0,0.05,0);
    objects.push(car);
-   for (var i = 0; i < 10; i++) {
+   for (var i = 0; i < 2; i++) {
 	   var statue = new Statue();
 	   var scale = Math.random()*(0.01 - 0.001) + 0.001;
 	   statue.setSize(scale, scale, scale);
@@ -183,6 +183,11 @@ window.onload = function init(){
       mountains.setSize(Math.random()*0.5 + 0.5, 1, Math.random()*0.5 + 0.5);
 	  mountains.setLocation(Math.random() * 20 - 10, -0.01, Math.random() - 9);
       objects.push(mountains);
+   }
+   for (var i = 0; i < 5; i++) {
+	   var dolphin = new Dolphin();
+	   dolphin.setSize(0.01, 0.01, 0.01);
+	   objects.push(dolphin);
    }
    skybox = new Skybox();
    render();
@@ -212,6 +217,13 @@ function render() {
       gl.disable(gl.DEPTH_TEST);
       skybox.draw(camera, projMat);
       gl.enable(gl.DEPTH_TEST);
+	  var num_dolphins = objects.filter(o => o instanceof Dolphin).length;
+	  if (num_dolphins < 5 && Math.random() < 0.05) {
+		  var dolphin = new Dolphin();
+	      dolphin.setSize(0.01, 0.01, 0.01);
+	      objects.push(dolphin);
+	  }
+	  objects = objects.filter(o => !(o.canDelete));
 	  objects.forEach(o => o.draw(cameraMat, projMat));
       gl.cullFace(gl.BACK);
    }, 10);
