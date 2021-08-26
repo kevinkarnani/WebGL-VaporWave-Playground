@@ -3,7 +3,6 @@ precision mediump float;
 flat in vec4 vColor;
 out vec4 fColor;
 
-void main()
-{
+void main() {
     fColor = vColor;
 }

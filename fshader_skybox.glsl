@@ -5,9 +5,7 @@ in vec3 texCoord;
 uniform samplerCube textureUnit;
 out vec4 fColor;
 
-void main()
-{
+void main() {
    fColor = texture(textureUnit, texCoord);
    fColor.a = 1.0;
 }
-

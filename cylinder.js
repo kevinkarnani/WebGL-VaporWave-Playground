@@ -31,8 +31,8 @@ class Cylinder extends glObject {
                 var normal = normalize(cross(subtract(b, a), subtract(c, b)));
 
                 this.triangle(a, b, c, d, normal, slices, stacks, i, j);
-            };
-        };
+            }
+        }
 
         this.caps(true, max, min, slices, normal, r, i);
 
@@ -41,10 +41,10 @@ class Cylinder extends glObject {
     }
 
     caps(top, max, min, slices, normal, r, i) {
-        var [topPoints, bottomPoints] = this.genData(max, min, r, slices);;
+        var [topPoints, bottomPoints] = this.genData(max, min, r, slices);
         for (i = 0; i < slices; i++) {
             normal = vec3(0.0, top ? 1.0 : -1.0, 0.0);
-            var a = vec4(0.0, top ? max: min, 0.0, 1.0);
+            var a = vec4(0.0, top ? max : min, 0.0, 1.0);
             var b = (top ? topPoints : bottomPoints)[i];
             var c = (top ? topPoints : bottomPoints)[i + 1];
             this.vPositions.push(a);
@@ -58,17 +58,21 @@ class Cylinder extends glObject {
             this.vPositions.push(c);
             this.vNormals.push(normal);
             this.vTexs.push(vec2(0, 1));
-        };
+        }
     }
 
     genData(max, min, r, slices) {
         var topPoints = [];
         var bottomPoints = [];
         for (var i = 0; i < slices; i++) {
-            var theta = 2.0 * i * Math.PI / slices;
-            topPoints.push(vec4(r * Math.sin(theta), max, r * Math.cos(theta), 1.0));
-            bottomPoints.push(vec4(r * Math.sin(theta), min, r * Math.cos(theta), 1.0));
-        };
+            var theta = (2.0 * i * Math.PI) / slices;
+            topPoints.push(
+                vec4(r * Math.sin(theta), max, r * Math.cos(theta), 1.0)
+            );
+            bottomPoints.push(
+                vec4(r * Math.sin(theta), min, r * Math.cos(theta), 1.0)
+            );
+        }
         topPoints.push(vec4(0.0, max, r, 1.0));
         bottomPoints.push(vec4(0.0, min, r, 1.0));
         return [topPoints, bottomPoints];
@@ -95,7 +99,7 @@ class Cylinder extends glObject {
 
         this.vPositions.push(c);
         this.vNormals.push(normal);
-        this.vTexs.push(vec2((i + 1) / slices, (j - 1)  / stacks));
+        this.vTexs.push(vec2((i + 1) / slices, (j - 1) / stacks));
 
         this.vPositions.push(d);
         this.vNormals.push(normal);

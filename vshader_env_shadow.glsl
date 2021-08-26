@@ -17,12 +17,15 @@ out vec3 pos;
 out vec3 lightPosInCam1;
 out vec3 lightPosInCam2;
 out vec2 texCoord;
+out vec3 R;
+out vec4 shadow_coord;
 
 uniform bool useVertex;
 
 uniform mat4 modelMatrix;
 uniform mat4 cameraMatrix;
 uniform mat4 projMatrix;
+uniform mat4 lightCameraMatrix;
 
 uniform vec4 matAmbient, matDiffuse, matSpecular;
 uniform float matAlpha;
@@ -58,6 +61,9 @@ void main() {
    // direction of light relative to camera
    fLS1 = normalize((lightDir1).xyz);
    fLS2 = normalize((cameraMatrix * lightDir2).xyz);
+   vec4 V = normalize(modelMatrix * aPosition - inverse(cameraMatrix) * vec4(0, 0, 0, 1));
+   vec4 N = normalize(modelMatrix * vec4(aNormal, 0));
+   R = reflect(V, N).xyz;
 
    if(useVertex) {
       // per-vertex shader
@@ -120,4 +126,5 @@ void main() {
    }
 
    gl_Position = projMatrix * cameraMatrix * modelMatrix * aPosition;
+   shadow_coord = projMatrix * lightCameraMatrix * modelMatrix * aPosition;
 }

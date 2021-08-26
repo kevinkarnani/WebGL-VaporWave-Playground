@@ -5,8 +5,7 @@ uniform mat4 modelMatrix;
 uniform mat4 cameraMatrix;
 flat out vec4 vColor;
 
-void main()
-{
-    gl_Position = cameraMatrix*modelMatrix*vec4(aPosition, 1.0);
+void main() {
+    gl_Position = cameraMatrix * modelMatrix * vec4(aPosition, 1.0);
     vColor = aColor;
 }

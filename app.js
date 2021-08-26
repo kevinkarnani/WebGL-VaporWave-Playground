@@ -10,7 +10,11 @@ var camera;
 var cylinder;
 var pyramid;
 var objects = [];
+var shadowFrameBuffer;
+var shadowRenderBuffer;
 
+var sdtSize = 1024;
+var maxDepth = 10;
 var useCarCamera = false;
 var rollAmt = 0;
 var pitchAmt = 0;
@@ -32,7 +36,7 @@ function mousedownHandler(event) {
     var point = normalize(vec3(pworld[0], pworld[1], pworld[2]));
     var min_t = null;
     var min_object = null;
-    objects.forEach(o => {
+    objects.forEach((o) => {
         var t = o.testCollision(point);
         if (t !== null && (min_t === null || t < min_t)) {
             min_t = t;
@@ -126,7 +130,7 @@ window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
     // preserveDrawingBuffer allows for this to work on Chrome
     // Otherwise, the render buffer can get cleared between calls to draw()
-    gl = canvas.getContext('webgl2', {
+    gl = canvas.getContext("webgl2", {
         preserveDrawingBuffer: true
     });
     if (!gl) {
@@ -143,94 +147,121 @@ window.onload = function init() {
     globalCamera = new Camera();
     globalCamera.pitch(45);
     camera = globalCamera;
-    //camera.eye = vec3(2.94922331415928, -0.07186930389014051, 0.8402009231580996);
-    //camera.n = vec3(0.02294257315652217, -0.9797742832195558, -0.19878629801513847);
-    //camera.u = vec3(-0.998629534754574, -0.013103876936301611, -0.05066893254353733);
-    //camera.v = vec3(0.047039245878531484, 0.1996763439940839, -0.9787321732712865);
     camera.updateCamMatrix();
-    //comment the lines above
     carCamera = new CarCamera();
     sun = new Light();
     sun.setLocation(0, 0, 10);
     sun.setAmbient(0.5, 0.5, 0.5);
-    //sun.turnOff();
     flashlight = new Light();
     flashlight.setType(1);
     flashlight.setAmbient(1.0, 1.0, 1.0);
     var plane = new Plane(5);
     plane.setSize(10, 1, 10);
     objects.push(plane);
-    //var sphere = new Sphere(4);
-    //sphere.setSize(0.15,0.15,0.15);
-    //sphere.setLocation(-0.5,0.15,0);
-    //objects.push(sphere);
-	for (var i = 0; i < 3; i++) {
-		var base = new Cube();
-		base.setSize(2.35 - 0.05*i, 0.05, 2.35*2 - 0.05*i);
-		base.setLocation(0.5 + 0.5 * 4,0.05*(i+1),0 + 0.5 * 8.5);
-		objects.push(base);
-	}
+    for (var i = 0; i < 3; i++) {
+        var base = new Cube();
+        base.setSize(2.35 - 0.05 * i, 0.05, 2.35 * 2 - 0.05 * i);
+        base.setLocation(0.5 + 0.5 * 4, 0.05 * (i + 1), 0 + 0.5 * 8.5);
+        objects.push(base);
+    }
     for (var i = 0; i < 8; i++) {
-      // top left to top right
-      cylinder = new Cylinder();
-      cylinder.setSize(.2, 5, .2);
-      cylinder.setLocation(0.5 + 0.5 * i, 0.1, 0);
-      objects.push(cylinder);
-	  // bottom right to bottom left
-      cylinder = new Cylinder();
-      cylinder.setSize(.2, 5, .2);
-      cylinder.setLocation(0.5 + 0.5 * i, 0.1, 8.5);
-      objects.push(cylinder);
+        // top left to top right
+        cylinder = new Cylinder();
+        cylinder.setSize(0.2, 5, 0.2);
+        cylinder.setLocation(0.5 + 0.5 * i, 0.1, 0);
+        objects.push(cylinder);
+        // bottom right to bottom left
+        cylinder = new Cylinder();
+        cylinder.setSize(0.2, 5, 0.2);
+        cylinder.setLocation(0.5 + 0.5 * i, 0.1, 8.5);
+        objects.push(cylinder);
     }
 
     for (var i = 0; i < 17; i++) {
-      // top right to bottom right
-      cylinder = new Cylinder();
-      cylinder.setSize(.2, 5, .2);
-      cylinder.setLocation(4.5, 0.1, 0 + 0.5 * i);
-      objects.push(cylinder);
-      // top left to bottom left
-      cylinder = new Cylinder();
-      cylinder.setSize(.2, 5, .2);
-      cylinder.setLocation(0.5, 0.1, 0 + 0.5 * i);
-      objects.push(cylinder);
+        // top right to bottom right
+        cylinder = new Cylinder();
+        cylinder.setSize(0.2, 5, 0.2);
+        cylinder.setLocation(4.5, 0.1, 0 + 0.5 * i);
+        objects.push(cylinder);
+        // top left to bottom left
+        cylinder = new Cylinder();
+        cylinder.setSize(0.2, 5, 0.2);
+        cylinder.setLocation(0.5, 0.1, 0 + 0.5 * i);
+        objects.push(cylinder);
     }
 
     pyramid = new Pyramid();
     pyramid.setLocation(0.5 + 0.5 * 4, 2.6, 0 + 0.5 * 8.5);
-    pyramid.setSize(2.35, 1.5, 2.35*2);
+    pyramid.setSize(2.35, 1.5, 2.35 * 2);
     objects.push(pyramid);
-    
-    var statue = new Statue()
-    statue.setLocation(0.5 + 0.5 * 4, 0.05*4, 0 + 0.5 * 8.5);
-    statue.setSize(.008, .008, .008)
+
+    var statue = new Statue();
+    statue.setLocation(0.5 + 0.5 * 4, 0.05 * 4, 0 + 0.5 * 8.5);
+    statue.setSize(0.008, 0.008, 0.008);
     objects.push(statue);
-    
+
     car = new OBJLoader("models/cybertruck.obj", "textures/metal.jpg");
     car.setSize(0.001, 0.001, 0.001);
     car.setLocation(0, 0.05, 0);
-	car.reflect = true;
-	var cameraRad = car.yrot * (2 * Math.PI / 360);
-    carCamera.setPosition(...add(car.getLocation(), vec3(-0.25 * Math.sin(cameraRad), 0.25, -0.25 * Math.cos(cameraRad))));
+    car.reflect = true;
+    var cameraRad = car.yrot * ((2 * Math.PI) / 360);
+    carCamera.setPosition(
+        ...add(
+            car.getLocation(),
+            vec3(-0.25 * Math.sin(cameraRad), 0.25, -0.25 * Math.cos(cameraRad))
+        )
+    );
     carCamera.setAt(...add(car.getLocation(), vec3(0, 0.25, 0)));
     objects.push(car);
     for (var i = 0; i < 25; i++) {
         var mountains;
         mountains = new Mountains(1);
-        mountains.setSize(Math.random() * 0.5 + 0.5, 1, Math.random() * 0.5 + 0.5);
-        mountains.setLocation(Math.random() + 9, -0.01, Math.random() * 20 - 10);
+        mountains.setSize(
+            Math.random() * 0.5 + 0.5,
+            1,
+            Math.random() * 0.5 + 0.5
+        );
+        mountains.setLocation(
+            Math.random() + 9,
+            -0.01,
+            Math.random() * 20 - 10
+        );
         objects.push(mountains);
         mountains = new Mountains(1);
-        mountains.setSize(Math.random() * 0.5 + 0.5, 1, Math.random() * 0.5 + 0.5);
-        mountains.setLocation(Math.random() - 9, -0.01, Math.random() * 20 - 10);
+        mountains.setSize(
+            Math.random() * 0.5 + 0.5,
+            1,
+            Math.random() * 0.5 + 0.5
+        );
+        mountains.setLocation(
+            Math.random() - 9,
+            -0.01,
+            Math.random() * 20 - 10
+        );
         objects.push(mountains);
         mountains = new Mountains(1);
-        mountains.setSize(Math.random() * 0.5 + 0.5, 1, Math.random() * 0.5 + 0.5);
-        mountains.setLocation(Math.random() * 20 - 10, -0.01, Math.random() + 9);
+        mountains.setSize(
+            Math.random() * 0.5 + 0.5,
+            1,
+            Math.random() * 0.5 + 0.5
+        );
+        mountains.setLocation(
+            Math.random() * 20 - 10,
+            -0.01,
+            Math.random() + 9
+        );
         objects.push(mountains);
         mountains = new Mountains(1);
-        mountains.setSize(Math.random() * 0.5 + 0.5, 1, Math.random() * 0.5 + 0.5);
-        mountains.setLocation(Math.random() * 20 - 10, -0.01, Math.random() - 9);
+        mountains.setSize(
+            Math.random() * 0.5 + 0.5,
+            1,
+            Math.random() * 0.5 + 0.5
+        );
+        mountains.setLocation(
+            Math.random() * 20 - 10,
+            -0.01,
+            Math.random() - 9
+        );
         objects.push(mountains);
     }
     for (var i = 0; i < 5; i++) {
@@ -238,57 +269,131 @@ window.onload = function init() {
         dolphin.setSize(0.01, 0.01, 0.01);
         objects.push(dolphin);
     }
-	for (var i = 0; i < 10; i++) {
-		var fiji = new Fiji();
-		objects.push(fiji);
-	}
-	for (var i = 0; i < 10; i++) {
-		var palm = new Palm();
-		palm.setSize(0.3, 0.3, 0.3);
-		palm.setLocation(Math.random() * -5, 0, Math.random() * 10 - 5);
-		objects.push(palm);
-	}
-	for (var i = 0; i < 10; i++) {
-		var palm = new Palm();
-		palm.setSize(0.3, 0.3, 0.3);
-		palm.setLocation(Math.random() * 5 + 5, 0, Math.random() * 10 - 5);
-		objects.push(palm);
-	}
-	for (var i = 0; i < 10; i++) {
-		var palm = new Palm();
-		palm.setSize(0.3, 0.3, 0.3);
-		palm.setLocation(Math.random() * 5, 0, Math.random() * -5);
-		objects.push(palm);
-	}
+    for (var i = 0; i < 10; i++) {
+        var fiji = new Fiji();
+        objects.push(fiji);
+    }
+    for (var i = 0; i < 10; i++) {
+        var palm = new Palm();
+        palm.setSize(0.3, 0.3, 0.3);
+        palm.setLocation(Math.random() * -5, 0, Math.random() * 10 - 5);
+        objects.push(palm);
+    }
+    for (var i = 0; i < 10; i++) {
+        var palm = new Palm();
+        palm.setSize(0.3, 0.3, 0.3);
+        palm.setLocation(Math.random() * 5 + 5, 0, Math.random() * 10 - 5);
+        objects.push(palm);
+    }
+    for (var i = 0; i < 10; i++) {
+        var palm = new Palm();
+        palm.setSize(0.3, 0.3, 0.3);
+        palm.setLocation(Math.random() * 5, 0, Math.random() * -5);
+        objects.push(palm);
+    }
     skybox = new Skybox();
+    shadowFrameBuffer = gl.createFramebuffer();
+    shadowFrameBuffer.width = sdtSize;
+    shadowFrameBuffer.height = sdtSize;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFrameBuffer);
+    shadowRenderBuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, shadowRenderBuffer);
+    gl.renderbufferStorage(
+        gl.RENDERBUFFER,
+        gl.DEPTH_COMPONENT16,
+        sdtSize,
+        sdtSize
+    );
+    gl.framebufferRenderbuffer(
+        gl.FRAMEBUFFER,
+        gl.DEPTH_ATTACHMENT,
+        gl.RENDERBUFFER,
+        shadowRenderBuffer
+    );
+    sun.depthTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
+    gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        sdtSize,
+        sdtSize,
+        0,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        null
+    );
+    gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); //restore to window frame/depth buffer
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     render();
 };
 
+function renderShadowMaps() {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFrameBuffer);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, shadowRenderBuffer);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
+    gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D,
+        sun.depthTexture,
+        0
+    );
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    for (var i = 0; i < objects.length; i++) {
+        if (objects[i].shadow) {
+            objects[i].drawToShadowMap(camera.getProjectionMatrix());
+        }
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); //return to screens buffers
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+}
+
 function render() {
-    setTimeout(function() {
+    setTimeout(function () {
+        gl.cullFace(gl.FRONT);
+        renderShadowMaps();
+        gl.cullFace(gl.BACK);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         requestAnimationFrame(render);
         camera.update(forwardAmt, rightAmt, rollAmt, pitchAmt, yawAmt);
-        var pos = camera.getPosition();
         var dir = camera.getDirection();
         var dir2 = carCamera.getDirection();
         flashlight.setDirection(dir2[0], 0, dir2[2]);
         flashlight.setLocation(...car.getLocation());
         if (useCarCamera) {
-            car.setLocation(...add(car.getLocation(), mult(vec3(forwardAmt * 0.1, 0, forwardAmt * 0.1), dir)));
+            car.setLocation(
+                ...add(
+                    car.getLocation(),
+                    mult(vec3(forwardAmt * 0.1, 0, forwardAmt * 0.1), dir)
+                )
+            );
             car.updateRotationsDelta(0, -rightAmt * 2, 0);
-            var cameraRad = car.yrot * (2 * Math.PI / 360);
-            camera.setPosition(...add(car.getLocation(), vec3(-0.25 * Math.sin(cameraRad), 0.25, -0.25 * Math.cos(cameraRad))));
+            var cameraRad = car.yrot * ((2 * Math.PI) / 360);
+            camera.setPosition(
+                ...add(
+                    car.getLocation(),
+                    vec3(
+                        -0.25 * Math.sin(cameraRad),
+                        0.25,
+                        -0.25 * Math.cos(cameraRad)
+                    )
+                )
+            );
             camera.setAt(...add(car.getLocation(), vec3(0, 0.25, 0)));
-            //camera.setAt(...car.getLocation());
         }
         var cameraMat = camera.getCameraMatrix();
         var projMat = camera.getProjectionMatrix();
         gl.disable(gl.DEPTH_TEST);
         skybox.draw(camera, projMat);
         gl.enable(gl.DEPTH_TEST);
-        objects = objects.filter(o => !(o.canDelete));
-        objects.forEach(o => o.draw(cameraMat, projMat));
+        objects = objects.filter((o) => !o.canDelete);
+        objects.forEach((o) => o.draw(cameraMat, projMat));
         gl.cullFace(gl.BACK);
     }, 10);
-};
+}
