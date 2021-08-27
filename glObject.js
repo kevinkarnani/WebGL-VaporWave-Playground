@@ -288,7 +288,7 @@ class glObject {
         );
         var camera_matrix = lookAt(
             vec3(sun.position[0], sun.position[1], sun.position[2]),
-            vec3(0, 0, 0),
+            vec3(0,0,0),
             vec3(0, 1, 0)
         );
         gl.uniformMatrix4fv(
@@ -443,7 +443,7 @@ class glObject {
         );
         var light_camera_matrix = lookAt(
             vec3(sun.position[0], sun.position[1], sun.position[2]),
-            vec3(0, 0, 0),
+            vec3(0,0,0),
             vec3(0, 1, 0)
         );
         gl.uniformMatrix4fv(
