@@ -26,6 +26,7 @@ uniform mat4 modelMatrix;
 uniform mat4 cameraMatrix;
 uniform mat4 projMatrix;
 uniform mat4 lightCameraMatrix;
+uniform mat4 lightProjMatrix;
 
 uniform vec4 matAmbient, matDiffuse, matSpecular;
 uniform float matAlpha;
@@ -59,7 +60,7 @@ void main() {
    // normal in camera coordinates
    fN = normalize(cameraMatrix * modelMatrix * vec4(aNormal, 0)).xyz;
    // direction of light relative to camera
-   fLS1 = normalize((lightDir1).xyz);
+   fLS1 = normalize((cameraMatrix * lightDir1).xyz);
    fLS2 = normalize((cameraMatrix * lightDir2).xyz);
    vec4 V = normalize(modelMatrix * aPosition - inverse(cameraMatrix) * vec4(0, 0, 0, 1));
    vec4 N = normalize(modelMatrix * vec4(aNormal, 0));
@@ -126,5 +127,5 @@ void main() {
    }
 
    gl_Position = projMatrix * cameraMatrix * modelMatrix * aPosition;
-   shadow_coord = projMatrix * lightCameraMatrix * modelMatrix * aPosition;
+   shadow_coord = lightProjMatrix * lightCameraMatrix * modelMatrix * aPosition;
 }

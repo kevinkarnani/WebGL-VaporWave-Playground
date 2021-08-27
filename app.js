@@ -8,13 +8,14 @@ var skybox;
 var car;
 var camera;
 var cylinder;
+var base;
 var pyramid;
 var objects = [];
 var shadowFrameBuffer;
 var shadowRenderBuffer;
 
 var sdtSize = 1024;
-var maxDepth = 10;
+var maxDepth = 100.0;
 var useCarCamera = false;
 var rollAmt = 0;
 var pitchAmt = 0;
@@ -150,7 +151,7 @@ window.onload = function init() {
     camera.updateCamMatrix();
     carCamera = new CarCamera();
     sun = new Light();
-    sun.setLocation(0, 0, 10);
+    sun.setLocation(0, 5, 20);
     sun.setAmbient(0.5, 0.5, 0.5);
     flashlight = new Light();
     flashlight.setType(1);
@@ -159,7 +160,7 @@ window.onload = function init() {
     plane.setSize(10, 1, 10);
     objects.push(plane);
     for (var i = 0; i < 3; i++) {
-        var base = new Cube();
+        base = new Cube();
         base.setSize(2.35 - 0.05 * i, 0.05, 2.35 * 2 - 0.05 * i);
         base.setLocation(0.5 + 0.5 * 4, 0.05 * (i + 1), 0 + 0.5 * 8.5);
         objects.push(base);
@@ -333,10 +334,12 @@ window.onload = function init() {
 };
 
 function renderShadowMaps() {
+	var viewportParams = gl.getParameter(gl.VIEWPORT);
     gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFrameBuffer);
     gl.bindRenderbuffer(gl.RENDERBUFFER, shadowRenderBuffer);
-    gl.activeTexture(gl.TEXTURE0);
+    gl.activeTexture(gl.TEXTURE2);
     gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
+	gl.viewport(0, 0, sdtSize, sdtSize);
     gl.framebufferTexture2D(
         gl.FRAMEBUFFER,
         gl.COLOR_ATTACHMENT0,
@@ -347,16 +350,30 @@ function renderShadowMaps() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     for (var i = 0; i < objects.length; i++) {
         if (objects[i].shadow) {
-            objects[i].drawToShadowMap(camera.getProjectionMatrix());
+            objects[i].drawToShadowMap(perspective(
+            90,
+            canvas.width / canvas.height,
+            0.1,
+            100
+        ));
         }
     }
+	gl.viewport(
+            viewportParams[0],
+            viewportParams[1],
+            viewportParams[2],
+            viewportParams[3]
+        );
     gl.bindFramebuffer(gl.FRAMEBUFFER, null); //return to screens buffers
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+	//base.textureID = sun.depthTexture;
+	//gl.activeTexture(gl.TEXTURE0);
+    //gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
 }
 
 function render() {
     setTimeout(function () {
-        gl.cullFace(gl.FRONT);
+        //gl.cullFace(gl.FRONT);
         renderShadowMaps();
         gl.cullFace(gl.BACK);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

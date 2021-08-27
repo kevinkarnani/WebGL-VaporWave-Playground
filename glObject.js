@@ -41,6 +41,10 @@ class glObject {
             this.program,
             "lightCameraMatrix"
         );
+		this.lightProjMatrixID = gl.getUniformLocation(
+            this.program,
+            "lightProjMatrix"
+        );
 
         this.specular = vec4(0.8, 0.8, 0.8, 1.0);
         this.diffuse = vec4(0.9, 0.9, 0.9, 1.0);
@@ -288,7 +292,7 @@ class glObject {
         );
         var camera_matrix = lookAt(
             vec3(sun.position[0], sun.position[1], sun.position[2]),
-            vec3(0, 0, 0),
+            vec3(0,0,0),
             vec3(0, 1, 0)
         );
         gl.uniformMatrix4fv(
@@ -382,7 +386,7 @@ class glObject {
             gl.bindTexture(gl.TEXTURE_2D, this.textureID);
         }
 
-        if (this.shadow) {
+        if (!this.reflect && this.shadow) {
             gl.activeTexture(gl.TEXTURE2);
             gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
         }
@@ -443,7 +447,7 @@ class glObject {
         );
         var light_camera_matrix = lookAt(
             vec3(sun.position[0], sun.position[1], sun.position[2]),
-            vec3(0, 0, 0),
+            vec3(0,0,0),
             vec3(0, 1, 0)
         );
         gl.uniformMatrix4fv(
@@ -451,6 +455,17 @@ class glObject {
             false,
             flatten(light_camera_matrix)
         );
+		var light_proj_matrix = perspective(
+            90,
+            canvas.width / canvas.height,
+            0.1,
+            100
+        );
+		gl.uniformMatrix4fv(
+		    this.lightProjMatrixID,
+			false,
+			flatten(light_proj_matrix)
+		);
         gl.uniform1f(this.maxDepthID, maxDepth);
 
         //enable and draw!
@@ -564,12 +579,14 @@ class glObject {
             }
             cam.updateCamMatrix();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+			gl.disable(gl.DEPTH_TEST);
+            skybox.draw(cam, proj_matrix);
+			gl.enable(gl.DEPTH_TEST);
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i] != this) {
                     objects[i].render(cam.getCameraMatrix(), proj_matrix);
                 }
             }
-            skybox.draw(cam, proj_matrix);
             gl.useProgram(this.program);
         }
         gl.viewport(
