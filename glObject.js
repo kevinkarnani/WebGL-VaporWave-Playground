@@ -382,7 +382,7 @@ class glObject {
             gl.bindTexture(gl.TEXTURE_2D, this.textureID);
         }
 
-        if (this.shadow) {
+        if (!this.reflect && this.shadow) {
             gl.activeTexture(gl.TEXTURE2);
             gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
         }
@@ -564,12 +564,14 @@ class glObject {
             }
             cam.updateCamMatrix();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+			gl.disable(gl.DEPTH_TEST);
+            skybox.draw(cam, proj_matrix);
+			gl.enable(gl.DEPTH_TEST);
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i] != this) {
                     objects[i].render(cam.getCameraMatrix(), proj_matrix);
                 }
             }
-            skybox.draw(cam, proj_matrix);
             gl.useProgram(this.program);
         }
         gl.viewport(
