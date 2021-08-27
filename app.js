@@ -24,6 +24,7 @@ var forwardAmt = 0;
 var rightAmt = 0;
 var xclip = 0;
 var yclip = 0;
+var sunAngle = 0;
 
 function mousedownHandler(event) {
     // Implementing picking
@@ -151,8 +152,8 @@ window.onload = function init() {
     camera.updateCamMatrix();
     carCamera = new CarCamera();
     sun = new Light();
-    sun.setLocation(0, 5, 20);
-    sun.setAmbient(0.5, 0.5, 0.5);
+    sun.setLocation(0, 0, 20);
+    sun.setAmbient(0.7, 0.7, 0.7);
     flashlight = new Light();
     flashlight.setType(1);
     flashlight.setAmbient(1.0, 1.0, 1.0);
@@ -165,29 +166,30 @@ window.onload = function init() {
         base.setLocation(0.5 + 0.5 * 4, 0.05 * (i + 1), 0 + 0.5 * 8.5);
         objects.push(base);
     }
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 9; i++) {
         // top left to top right
         cylinder = new Cylinder();
-        cylinder.setSize(0.2, 5, 0.2);
-        cylinder.setLocation(0.5 + 0.5 * i, 0.1, 0);
+        cylinder.setSize(0.2, 2.4, 0.2);
+        cylinder.setLocation(0.5 + 0.5 * i, 1.4, 0);
+        //cylinder.translate()
         objects.push(cylinder);
         // bottom right to bottom left
         cylinder = new Cylinder();
-        cylinder.setSize(0.2, 5, 0.2);
-        cylinder.setLocation(0.5 + 0.5 * i, 0.1, 8.5);
+        cylinder.setSize(0.2, 2.4, 0.2);
+        cylinder.setLocation(0.5 + 0.5 * i, 1.4, 8.5);
         objects.push(cylinder);
     }
 
     for (var i = 0; i < 17; i++) {
         // top right to bottom right
         cylinder = new Cylinder();
-        cylinder.setSize(0.2, 5, 0.2);
-        cylinder.setLocation(4.5, 0.1, 0 + 0.5 * i);
+        cylinder.setSize(0.2, 2.4, 0.2);
+        cylinder.setLocation(4.5, 1.4, 0 + 0.5 * i);
         objects.push(cylinder);
         // top left to bottom left
         cylinder = new Cylinder();
-        cylinder.setSize(0.2, 5, 0.2);
-        cylinder.setLocation(0.5, 0.1, 0 + 0.5 * i);
+        cylinder.setSize(0.2, 2.4, 0.2);
+        cylinder.setLocation(0.5, 1.4, 0 + 0.5 * i);
         objects.push(cylinder);
     }
 
@@ -374,6 +376,8 @@ function renderShadowMaps() {
 function render() {
     setTimeout(function () {
         //gl.cullFace(gl.FRONT);
+        sunAngle += .01;
+        sun.setLocation(0, 20 * Math.sin(sunAngle), 20 * Math.cos(sunAngle));
         renderShadowMaps();
         gl.cullFace(gl.BACK);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
