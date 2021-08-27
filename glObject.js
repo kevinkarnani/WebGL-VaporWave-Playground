@@ -41,6 +41,10 @@ class glObject {
             this.program,
             "lightCameraMatrix"
         );
+		this.lightProjMatrixID = gl.getUniformLocation(
+            this.program,
+            "lightProjMatrix"
+        );
 
         this.specular = vec4(0.8, 0.8, 0.8, 1.0);
         this.diffuse = vec4(0.9, 0.9, 0.9, 1.0);
@@ -451,6 +455,17 @@ class glObject {
             false,
             flatten(light_camera_matrix)
         );
+		var light_proj_matrix = perspective(
+            90,
+            canvas.width / canvas.height,
+            0.1,
+            100
+		);
+		gl.uniformMatrix4fv(
+		    this.lightProjMatrixID,
+			false,
+			flatten(light_proj_matrix)
+		);
         gl.uniform1f(this.maxDepthID, maxDepth);
 
         //enable and draw!

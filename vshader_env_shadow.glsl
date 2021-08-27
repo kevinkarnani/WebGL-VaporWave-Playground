@@ -26,6 +26,7 @@ uniform mat4 modelMatrix;
 uniform mat4 cameraMatrix;
 uniform mat4 projMatrix;
 uniform mat4 lightCameraMatrix;
+uniform mat4 lightProjMatrix;
 
 uniform vec4 matAmbient, matDiffuse, matSpecular;
 uniform float matAlpha;
@@ -126,5 +127,5 @@ void main() {
    }
 
    gl_Position = projMatrix * cameraMatrix * modelMatrix * aPosition;
-   shadow_coord = projMatrix * lightCameraMatrix * modelMatrix * aPosition;
+   shadow_coord = lightProjMatrix * lightCameraMatrix * modelMatrix * aPosition;
 }

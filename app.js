@@ -337,8 +337,8 @@ function renderShadowMaps() {
 	var viewportParams = gl.getParameter(gl.VIEWPORT);
     gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFrameBuffer);
     gl.bindRenderbuffer(gl.RENDERBUFFER, shadowRenderBuffer);
-    //gl.activeTexture(gl.TEXTURE0);
-    //gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
 	gl.viewport(0, 0, sdtSize, sdtSize);
     gl.framebufferTexture2D(
         gl.FRAMEBUFFER,
@@ -350,7 +350,12 @@ function renderShadowMaps() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     for (var i = 0; i < objects.length; i++) {
         if (objects[i].shadow) {
-            objects[i].drawToShadowMap(camera.getProjectionMatrix());
+            objects[i].drawToShadowMap(perspective(
+            90,
+            canvas.width / canvas.height,
+            0.1,
+            100
+        ));
         }
     }
 	gl.viewport(
