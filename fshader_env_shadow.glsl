@@ -98,7 +98,24 @@ void main() {
                 adjust2 = cspot2 * 1.0;
             }
         }
-        fColor = adjust1 * (ambient1 + diffuse1 + spec1) + adjust2 * (ambient2 + diffuse2 + spec2);
+		
+		vec3 shadowMapTexCoord = shadow_coord.xyz / shadow_coord.w; //put in range [-1,1]
+		shadowMapTexCoord = 0.5 * shadowMapTexCoord.xyz + 0.5; //shift to range [0,1]
+		//distance between light an nearest occluder
+		float fragDistance = shadow_coord.z / maxDepth;
+		//float bias = max(0.01 * (1.0 - dot(N, L1)), 0.0001);
+		float bias = 0.003;
+		float shadow = 0.0;
+		vec2 texelSize = vec2(1.0/1024.0, 1.0/1024.0);
+		for(int x = -1; x <= 1; ++x) {
+			for(int y = -1; y <= 1; ++y) {
+				float nearestDistance = texture(depthTexture, shadowMapTexCoord.xy + vec2(x,y) * texelSize).r;
+				shadow += fragDistance - bias > nearestDistance ? 1.0 : 0.0;
+			}
+		}
+		shadow /= 9.0;
+		//fColor = texture(depthTexture, shadowMapTexCoord.xy);
+        fColor = adjust1 * (ambient1 + (1.0 - shadow)*(diffuse1 + spec1)) + adjust2 * (ambient2 + diffuse2 + spec2);
         fColor.a = 1.0;
     } else {
         fColor = color;
@@ -108,16 +125,4 @@ void main() {
     } else {
         fColor = fColor * texture(textureID, texCoord);
     }
-    vec4 temp = fColor;
-    vec3 shadowMapTexCoord = shadow_coord.xyz / shadow_coord.w; //put in range [-1,1]
-    shadowMapTexCoord = 0.5 * shadowMapTexCoord.xyz + 0.5; //shift to range [0,1]
-    //distance between light an nearest occluder
-    float nearestDistance = texture(depthTexture, shadowMapTexCoord.xy).r;
-    float fragDistance = shadow_coord.z / maxDepth;
-    if(nearestDistance < fragDistance - 0.05) { //precision allowance
-        temp.rgb *= 0.5;
-    }
-    temp.a = 1.0;
-    fColor = temp;
-	//fColor = texture(depthTexture, shadowMapTexCoord.xy);
 }

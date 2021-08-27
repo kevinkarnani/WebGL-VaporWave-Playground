@@ -60,7 +60,7 @@ void main() {
    // normal in camera coordinates
    fN = normalize(cameraMatrix * modelMatrix * vec4(aNormal, 0)).xyz;
    // direction of light relative to camera
-   fLS1 = normalize((lightDir1).xyz);
+   fLS1 = normalize((cameraMatrix * lightDir1).xyz);
    fLS2 = normalize((cameraMatrix * lightDir2).xyz);
    vec4 V = normalize(modelMatrix * aPosition - inverse(cameraMatrix) * vec4(0, 0, 0, 1));
    vec4 N = normalize(modelMatrix * vec4(aNormal, 0));

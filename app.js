@@ -15,7 +15,7 @@ var shadowFrameBuffer;
 var shadowRenderBuffer;
 
 var sdtSize = 1024;
-var maxDepth = 30.0;
+var maxDepth = 100.0;
 var useCarCamera = false;
 var rollAmt = 0;
 var pitchAmt = 0;
@@ -373,7 +373,7 @@ function renderShadowMaps() {
 
 function render() {
     setTimeout(function () {
-        gl.cullFace(gl.FRONT);
+        //gl.cullFace(gl.FRONT);
         renderShadowMaps();
         gl.cullFace(gl.BACK);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

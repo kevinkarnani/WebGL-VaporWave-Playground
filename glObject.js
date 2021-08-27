@@ -460,7 +460,7 @@ class glObject {
             canvas.width / canvas.height,
             0.1,
             100
-		);
+        );
 		gl.uniformMatrix4fv(
 		    this.lightProjMatrixID,
 			false,
