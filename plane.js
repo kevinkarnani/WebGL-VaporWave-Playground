@@ -47,24 +47,24 @@ class Plane extends glObject {
         var N1 = normalize(cross(subtract(b3, a3), subtract(c3, a3)));
         this.vPositions.push(a);
         this.vNormals.push(N1);
-        this.vTexs.push(vec2(0.0, 0.0));
+        this.vTexs.push(vec2((a[0]+1)/2, (a[2]+1)/2));
         this.vPositions.push(b);
         this.vNormals.push(N1);
-        this.vTexs.push(vec2(1.0, 0.0));
+        this.vTexs.push(vec2((b[0]+1)/2, (b[2]+1)/2));
         this.vPositions.push(c);
         this.vNormals.push(N1);
-        this.vTexs.push(vec2(1.0, 1.0));
+        this.vTexs.push(vec2((c[0]+1)/2, (c[2]+1)/2));
 
         // Second triangle
         var N2 = normalize(cross(subtract(d3, c3), subtract(a3, c3)));
         this.vPositions.push(c);
         this.vNormals.push(N2);
-        this.vTexs.push(vec2(0.0, 0.0));
+        this.vTexs.push(vec2((c[0]+1)/2, (c[2]+1)/2));
         this.vPositions.push(d);
         this.vNormals.push(N2);
-        this.vTexs.push(vec2(1.0, 1.0));
+        this.vTexs.push(vec2((d[0]+1)/2, (d[2]+1)/2));
         this.vPositions.push(a);
         this.vNormals.push(N2);
-        this.vTexs.push(vec2(0.0, 1.0));
+        this.vTexs.push(vec2((a[0]+1)/2, (a[2]+1)/2));
     }
 }

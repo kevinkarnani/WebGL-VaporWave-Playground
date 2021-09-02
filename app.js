@@ -152,7 +152,7 @@ window.onload = function init() {
     camera.updateCamMatrix();
     carCamera = new CarCamera();
     sun = new Light();
-    sun.setLocation(0, 0, 20);
+    sun.setLocation(0, 5, 20);
     sun.setAmbient(0.7, 0.7, 0.7);
     flashlight = new Light();
     flashlight.setType(1);
@@ -376,8 +376,8 @@ function renderShadowMaps() {
 function render() {
     setTimeout(function () {
         //gl.cullFace(gl.FRONT);
-        sunAngle += .01;
-        sun.setLocation(0, 20 * Math.sin(sunAngle), 20 * Math.cos(sunAngle));
+        //sunAngle += .001;
+        //sun.setLocation(0, 20 * Math.sin(sunAngle), 20 * Math.cos(sunAngle));
         renderShadowMaps();
         gl.cullFace(gl.BACK);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -391,7 +391,7 @@ function render() {
             car.setLocation(
                 ...add(
                     car.getLocation(),
-                    mult(vec3(forwardAmt * 0.1, 0, forwardAmt * 0.1), dir)
+                    mult(vec3(forwardAmt * 0.5, 0, forwardAmt * 0.5), dir)
                 )
             );
             car.updateRotationsDelta(0, -rightAmt * 2, 0);
