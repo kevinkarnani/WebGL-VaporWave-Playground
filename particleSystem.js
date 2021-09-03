@@ -7,7 +7,11 @@ class ParticleSystem {
         this.MAX_NUM_PARTICLES = 1000;
         this.initializeSystem();
 
-        this.program = initShaders(gl, "vshader_particles.glsl", "fshader_particles.glsl");
+        this.program = initShaders(
+            gl,
+            "vshader_particles.glsl",
+            "fshader_particles.glsl"
+        );
 
         this.vID = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vID);
@@ -17,7 +21,10 @@ class ParticleSystem {
         this.modelMatrix = mat4();
 
         this.modelMatrixID = gl.getUniformLocation(this.program, "modelMatrix");
-        this.cameraMatrixID = gl.getUniformLocation(this.program, "cameraMatrix");
+        this.cameraMatrixID = gl.getUniformLocation(
+            this.program,
+            "cameraMatrix"
+        );
         this.projMatrixID = gl.getUniformLocation(this.program, "projMatrix");
         this.colorID = gl.getUniformLocation(this.program, "uColor");
     }
@@ -29,7 +36,7 @@ class ParticleSystem {
             var velocity = vec3();
             for (var j = 0; j < 3; j++) {
                 position[j] = Math.random() * 20 - 10;
-                velocity[j] = j == 1 ? Math.random() * (-1) - 1.0 : 0;
+                velocity[j] = j == 1 ? Math.random() * -1 - 1.0 : 0;
                 mass = Math.random();
             }
 
@@ -45,16 +52,21 @@ class ParticleSystem {
                 this.positions[i][j] += 0.1 * this.velocities[i][j];
             }
             this.gravity(i);
-			var pyrX = 0.5 + 0.5 * 4;
-			var pyrY = 2.6;
-			var pyrZ = 0 + 0.5 * 8.5;
-			var pyrXSc = 2.35;
-			var pyrZSc = 2 * 2.35;
-			if (this.positions[i][1] < 0 || (Math.abs(this.positions[i][0] - pyrX) <= pyrXSc && Math.abs(this.positions[i][2] - pyrZ) <= pyrZSc && this.positions[i][1] < pyrY)) {
-               this.positions[i][1] = 10;
+            var pyrX = 0.5 + 0.5 * 4;
+            var pyrY = 2.6;
+            var pyrZ = 0 + 0.5 * 8.5;
+            var pyrXSc = 2.35;
+            var pyrZSc = 2 * 2.35;
+            if (
+                this.positions[i][1] < 0 ||
+                (Math.abs(this.positions[i][0] - pyrX) <= pyrXSc &&
+                    Math.abs(this.positions[i][2] - pyrZ) <= pyrZSc &&
+                    this.positions[i][1] < pyrY)
+            ) {
+                this.positions[i][1] = 10;
             }
         }
-        
+
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vID);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(this.positions), gl.STATIC_DRAW);
     }
@@ -111,11 +123,7 @@ class ParticleSystem {
             flatten(this.modelMatrix)
         );
         gl.uniformMatrix4fv(this.cameraMatrixID, false, flatten(camera));
-        gl.uniformMatrix4fv(
-            this.projMatrixID,
-            false,
-            flatten(projection)
-        );
+        gl.uniformMatrix4fv(this.projMatrixID, false, flatten(projection));
         gl.uniform4fv(this.colorID, vec4(0, 0, 1, 1));
 
         gl.enableVertexAttribArray(this.aPosition);

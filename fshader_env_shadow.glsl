@@ -114,16 +114,16 @@ void main() {
       //float bias = max(0.01 * (1.0 - dot(N, L1)), 0.0001);
       float bias = 0.003;
       float shadow = 0.0;
-      vec2 texelSize = vec2(1.0/1024.0, 1.0/1024.0);
+      vec2 texelSize = vec2(1.0 / 1024.0, 1.0 / 1024.0);
       for(int x = -1; x <= 1; ++x) {
          for(int y = -1; y <= 1; ++y) {
-            float nearestDistance = texture(depthTexture, shadowMapTexCoord.xy + vec2(x,y) * texelSize).r;
+            float nearestDistance = texture(depthTexture, shadowMapTexCoord.xy + vec2(x, y) * texelSize).r;
             shadow += fragDistance - bias > nearestDistance ? 1.0 : 0.0;
          }
       }
       shadow /= 9.0;
       //fColor = texture(depthTexture, shadowMapTexCoord.xy);
-      fColor = adjust1 * (ambient1 + (1.0 - shadow)*(diffuse1 + spec1)) + adjust2 * (ambient2 + diffuse2 + spec2);
+      fColor = adjust1 * (ambient1 + (1.0 - shadow) * (diffuse1 + spec1)) + adjust2 * (ambient2 + diffuse2 + spec2);
       fColor.a = 1.0;
    } else {
       fColor = color;
@@ -137,14 +137,14 @@ void main() {
    if(useDistort) {
       fColor *= scanLine(gl_FragCoord.x, 4200.0, 0.1);
       fColor *= scanLine(gl_FragCoord.y, 4200.0, 0.1);
-      vec2 p = (3.0*gl_FragCoord.xy-800.0)/800.0;
-      for(int i=1; i<22; i++) {
-         vec2 newp=p;
-         newp.x+=0.65/float(i)*sin(float(i)*p.y+time/20.0+0.3*float(i));
-         newp.y+=0.65/float(i)*sin(float(i)*p.x+time/10.0+0.3*float(i+10))+15.0;
-         p=newp;
+      vec2 p = (3.0 * gl_FragCoord.xy - 800.0) / 800.0;
+      for(int i = 1; i < 22; i++) {
+         vec2 newp = p;
+         newp.x += 0.65 / float(i) * sin(float(i) * p.y + time / 20.0 + 0.3 * float(i));
+         newp.y += 0.65 / float(i) * sin(float(i) * p.x + time / 10.0 + 0.3 * float(i + 10)) + 15.0;
+         p = newp;
       }
-      vec3 col = vec3(0.5*sin(4.0*p.x)+0.5,0.5*sin(3.0*p.y)+0.5,sin(p.x+p.y));
+      vec3 col = vec3(0.5 * sin(4.0 * p.x) + 0.5, 0.5 * sin(3.0 * p.y) + 0.5, sin(p.x + p.y));
       fColor = mix(fColor, vec4(col, 1.0), 0.1);
       fColor.a = 1.0;
    }

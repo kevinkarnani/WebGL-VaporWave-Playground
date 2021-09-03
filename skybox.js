@@ -188,8 +188,8 @@ class Skybox {
         this.vPositions.push(vec4(c[0], c[1], c[2], 1.0));
     }
     draw(camera, projection) {
-      this.time += 0.1;
-      this.render(camera, projection);
+        this.time += 0.1;
+        this.render(camera, projection);
     }
     render(camera, projection) {
         var c = lookAt(
@@ -205,7 +205,7 @@ class Skybox {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.textureID);
         gl.uniform1i(this.textureUnit, 0);
-        gl.uniform1f(this.useDistort, useCarCamera); 
+        gl.uniform1f(this.useDistort, useCarCamera);
         gl.uniform1f(this.uTime, this.time);
 
         gl.uniformMatrix4fv(

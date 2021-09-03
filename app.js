@@ -150,7 +150,6 @@ window.onload = function init() {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-
     globalCamera = new Camera();
     globalCamera.moveForward(8);
     globalCamera.moveRight(3);
@@ -344,12 +343,12 @@ window.onload = function init() {
 };
 
 function renderShadowMaps() {
-	var viewportParams = gl.getParameter(gl.VIEWPORT);
+    var viewportParams = gl.getParameter(gl.VIEWPORT);
     gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFrameBuffer);
     gl.bindRenderbuffer(gl.RENDERBUFFER, shadowRenderBuffer);
     gl.activeTexture(gl.TEXTURE2);
     gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
-	gl.viewport(0, 0, sdtSize, sdtSize);
+    gl.viewport(0, 0, sdtSize, sdtSize);
     gl.framebufferTexture2D(
         gl.FRAMEBUFFER,
         gl.COLOR_ATTACHMENT0,
@@ -361,24 +360,21 @@ function renderShadowMaps() {
     ps.updateSystem();
     for (var i = 0; i < objects.length; i++) {
         if (objects[i].shadow) {
-            objects[i].drawToShadowMap(perspective(
-            90,
-            canvas.width / canvas.height,
-            0.1,
-            100
-        ));
+            objects[i].drawToShadowMap(
+                perspective(90, canvas.width / canvas.height, 0.1, 100)
+            );
         }
     }
-	gl.viewport(
-            viewportParams[0],
-            viewportParams[1],
-            viewportParams[2],
-            viewportParams[3]
-        );
+    gl.viewport(
+        viewportParams[0],
+        viewportParams[1],
+        viewportParams[2],
+        viewportParams[3]
+    );
     gl.bindFramebuffer(gl.FRAMEBUFFER, null); //return to screens buffers
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-	//base.textureID = sun.depthTexture;
-	//gl.activeTexture(gl.TEXTURE0);
+    //base.textureID = sun.depthTexture;
+    //gl.activeTexture(gl.TEXTURE0);
     //gl.bindTexture(gl.TEXTURE_2D, sun.depthTexture);
 }
 
@@ -422,9 +418,9 @@ function render() {
         gl.disable(gl.DEPTH_TEST);
         skybox.draw(camera, projMat);
         gl.enable(gl.DEPTH_TEST);
-        ps.draw(cameraMat, projMat)
-        objects = objects.filter(o => !o.canDelete);
-        objects.forEach(o => o.draw(cameraMat, projMat));
+        ps.draw(cameraMat, projMat);
+        objects = objects.filter((o) => !o.canDelete);
+        objects.forEach((o) => o.draw(cameraMat, projMat));
         gl.cullFace(gl.BACK);
     }, 10);
 }

@@ -43,7 +43,7 @@ class glObject {
             this.program,
             "lightCameraMatrix"
         );
-		this.lightProjMatrixID = gl.getUniformLocation(
+        this.lightProjMatrixID = gl.getUniformLocation(
             this.program,
             "lightProjMatrix"
         );
@@ -295,7 +295,7 @@ class glObject {
         );
         var camera_matrix = lookAt(
             vec3(sun.position[0], sun.position[1], sun.position[2]),
-            vec3(0,0,0),
+            vec3(0, 0, 0),
             vec3(0, 1, 0)
         );
         gl.uniformMatrix4fv(
@@ -407,7 +407,7 @@ class glObject {
         gl.vertexAttribPointer(this.aTexs, 2, gl.FLOAT, false, 0, 0);
         gl.uniform1i(this.textureSampler, 0);
         gl.uniform1f(this.useVertex, 0.0);
-        gl.uniform1f(this.useDistort, useCarCamera); 
+        gl.uniform1f(this.useDistort, useCarCamera);
         gl.uniform1f(this.useReflection, this.reflect);
         gl.uniform1f(this.uTime, this.time);
         // gl.uniform1f(this.hasShadow, this.shadow);
@@ -452,7 +452,7 @@ class glObject {
         );
         var light_camera_matrix = lookAt(
             vec3(sun.position[0], sun.position[1], sun.position[2]),
-            vec3(0,0,0),
+            vec3(0, 0, 0),
             vec3(0, 1, 0)
         );
         gl.uniformMatrix4fv(
@@ -460,17 +460,17 @@ class glObject {
             false,
             flatten(light_camera_matrix)
         );
-		var light_proj_matrix = perspective(
+        var light_proj_matrix = perspective(
             90,
             canvas.width / canvas.height,
             0.1,
             100
         );
-		gl.uniformMatrix4fv(
-		    this.lightProjMatrixID,
-			false,
-			flatten(light_proj_matrix)
-		);
+        gl.uniformMatrix4fv(
+            this.lightProjMatrixID,
+            false,
+            flatten(light_proj_matrix)
+        );
         gl.uniform1f(this.maxDepthID, maxDepth);
 
         //enable and draw!
@@ -585,9 +585,9 @@ class glObject {
             }
             cam.updateCamMatrix();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-			gl.disable(gl.DEPTH_TEST);
-         skybox.render(cam, proj_matrix);
-			gl.enable(gl.DEPTH_TEST);
+            gl.disable(gl.DEPTH_TEST);
+            skybox.render(cam, proj_matrix);
+            gl.enable(gl.DEPTH_TEST);
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i] != this) {
                     objects[i].render(cam.getCameraMatrix(), proj_matrix);
