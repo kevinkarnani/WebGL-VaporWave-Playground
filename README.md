@@ -23,11 +23,13 @@ The features were implemented:<br/>
 
 ### Running The Code
 
-If you have Python 3.x installed, run the following in the source directory.:
+If you have Python 3.x installed, run the following in the source directory:
 
 ```bash
 python -m http.server
 ```
+
+After that, open up your localhost at port 8000.
 
 ## Contributions
 
