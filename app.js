@@ -147,7 +147,9 @@ window.onload = function init() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     globalCamera = new Camera();
-    globalCamera.pitch(45);
+    globalCamera.moveForward(8);
+    globalCamera.moveRight(3);
+    globalCamera.yaw(180);
     camera = globalCamera;
     camera.updateCamMatrix();
     carCamera = new CarCamera();
