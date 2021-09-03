@@ -10,6 +10,7 @@ var camera;
 var cylinder;
 var base;
 var pyramid;
+var ps;
 var objects = [];
 var shadowFrameBuffer;
 var shadowRenderBuffer;
@@ -145,6 +146,10 @@ window.onload = function init() {
     gl.enable(gl.POLYGON_OFFSET_FILL);
     gl.clearColor(0.9, 0.9, 0.9, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
 
     globalCamera = new Camera();
     globalCamera.moveForward(8);
@@ -296,6 +301,7 @@ window.onload = function init() {
         palm.setLocation(Math.random() * 5, 0, Math.random() * -5);
         objects.push(palm);
     }
+    ps = new ParticleSystem();
     skybox = new Skybox();
     shadowFrameBuffer = gl.createFramebuffer();
     shadowFrameBuffer.width = sdtSize;
@@ -352,6 +358,7 @@ function renderShadowMaps() {
         0
     );
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    ps.updateSystem();
     for (var i = 0; i < objects.length; i++) {
         if (objects[i].shadow) {
             objects[i].drawToShadowMap(perspective(
@@ -415,8 +422,9 @@ function render() {
         gl.disable(gl.DEPTH_TEST);
         skybox.draw(camera, projMat);
         gl.enable(gl.DEPTH_TEST);
-        objects = objects.filter((o) => !o.canDelete);
-        objects.forEach((o) => o.draw(cameraMat, projMat));
+        ps.draw(cameraMat, projMat)
+        objects = objects.filter(o => !o.canDelete);
+        objects.forEach(o => o.draw(cameraMat, projMat));
         gl.cullFace(gl.BACK);
     }, 10);
 }

@@ -3,8 +3,23 @@ class ParticleSystem {
         this.positions = [];
         this.velocities = [];
         this.masses = [];
+        this.time = 0;
         this.MAX_NUM_PARTICLES = 1000;
         this.initializeSystem();
+
+        this.program = initShaders(gl, "vshader_particles.glsl", "fshader_particles.glsl");
+
+        this.vID = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vID);
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(this.positions), gl.STATIC_DRAW);
+        this.aPosition = gl.getAttribLocation(this.program, "aPosition");
+
+        this.modelMatrix = mat4();
+
+        this.modelMatrixID = gl.getUniformLocation(this.program, "modelMatrix");
+        this.cameraMatrixID = gl.getUniformLocation(this.program, "cameraMatrix");
+        this.projMatrixID = gl.getUniformLocation(this.program, "projMatrix");
+        this.colorID = gl.getUniformLocation(this.program, "uColor");
     }
 
     initializeSystem() {
@@ -29,8 +44,10 @@ class ParticleSystem {
             for (var j = 0; j < 3; j++) {
                 this.positions[i][j] += 0.1 * this.velocities[i][j];
             }
+            // this.collision(i);
+            this.gravity(i);
         }
-
+        
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vID);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(this.positions), gl.STATIC_DRAW);
     }
@@ -52,7 +69,7 @@ class ParticleSystem {
     }
 
     gravity(n) {
-        this.velocities[n][1] -= 0.1 / this.masses[n];
+        this.velocities[n][1] -= 0.001 / this.masses[n];
     }
 
     flock() {
@@ -73,5 +90,29 @@ class ParticleSystem {
                     PERCENT_FLOCK * flockVec[j];
             }
         }
+    }
+
+    draw(camera, projection) {
+        gl.useProgram(this.program);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vID);
+        gl.vertexAttribPointer(this.aPosition, 3, gl.FLOAT, false, 0, 0);
+
+        gl.uniformMatrix4fv(
+            this.modelMatrixID,
+            false,
+            flatten(this.modelMatrix)
+        );
+        gl.uniformMatrix4fv(this.cameraMatrixID, false, flatten(camera));
+        gl.uniformMatrix4fv(
+            this.projMatrixID,
+            false,
+            flatten(projection)
+        );
+        gl.uniform4fv(this.colorID, vec4(0, 0, 1, 1));
+
+        gl.enableVertexAttribArray(this.aPosition);
+        gl.drawArrays(gl.POINTS, 0, this.positions.length);
+        gl.disableVertexAttribArray(this.aPosition);
     }
 }

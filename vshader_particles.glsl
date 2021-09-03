@@ -1,17 +1,15 @@
 #version 300 es
 in vec3 aPosition;
-in vec3 aVelocity;
-
-uniform float time;
 uniform mat4 modelMatrix;
 uniform mat4 cameraMatrix;
 uniform mat4 projMatrix;
 uniform vec4 uColor;
 
-out vec4 vcolor;
+out vec4 vColor;
 
 void main() {
-    vec3 objectPos = aPosition + aVelocity * time;
+    vec3 objectPos = aPosition;
     gl_Position = projMatrix * cameraMatrix * modelMatrix * vec4(objectPos, 1);
-    vcolor = uColor;
+    vColor = uColor;
+    gl_PointSize = 6.0;
 }
