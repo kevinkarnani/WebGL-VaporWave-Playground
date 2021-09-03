@@ -45,7 +45,12 @@ class ParticleSystem {
                 this.positions[i][j] += 0.1 * this.velocities[i][j];
             }
             this.gravity(i);
-            if (this.positions[i][1] < 0) {
+			var pyrX = 0.5 + 0.5 * 4;
+			var pyrY = 2.6;
+			var pyrZ = 0 + 0.5 * 8.5;
+			var pyrXSc = 2.35;
+			var pyrZSc = 2 * 2.35;
+			if (this.positions[i][1] < 0 || (Math.abs(this.positions[i][0] - pyrX) <= pyrXSc && Math.abs(this.positions[i][2] - pyrZ) <= pyrZSc && this.positions[i][1] < pyrY)) {
                this.positions[i][1] = 10;
             }
         }
