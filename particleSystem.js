@@ -28,8 +28,8 @@ class ParticleSystem {
             var position = vec3();
             var velocity = vec3();
             for (var j = 0; j < 3; j++) {
-                position[j] = 2 * Math.random() - 1.0;
-                velocity[j] = 2 * Math.random() - 1.0;
+                position[j] = Math.random() * 20 - 10;
+                velocity[j] = j == 1 ? Math.random() * (-1) - 1.0 : 0;
                 mass = Math.random();
             }
 
@@ -44,8 +44,10 @@ class ParticleSystem {
             for (var j = 0; j < 3; j++) {
                 this.positions[i][j] += 0.1 * this.velocities[i][j];
             }
-            // this.collision(i);
             this.gravity(i);
+            if (this.positions[i][1] < 0) {
+               this.positions[i][1] = 10;
+            }
         }
         
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vID);
@@ -69,7 +71,7 @@ class ParticleSystem {
     }
 
     gravity(n) {
-        this.velocities[n][1] -= 0.001 / this.masses[n];
+        this.velocities[n][1] -= 0.0001 / this.masses[n];
     }
 
     flock() {
