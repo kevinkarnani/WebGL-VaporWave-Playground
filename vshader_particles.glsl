@@ -11,5 +11,5 @@ void main() {
     vec3 objectPos = aPosition;
     gl_Position = projMatrix * cameraMatrix * modelMatrix * vec4(objectPos, 1);
     vColor = uColor;
-    gl_PointSize = 6.0;
+    gl_PointSize = 3.0;
 }
