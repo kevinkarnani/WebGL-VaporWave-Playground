@@ -4,6 +4,7 @@ class glObject {
         this.xrot = 0;
         this.yrot = 0;
         this.zrot = 0;
+        this.time = 0.0;
         this.pickable = false;
         this.picked = false;
         this.canDelete = false;
@@ -28,6 +29,7 @@ class glObject {
         this.rotationZMatrix = mat4();
         this.rotationYMatrix = mat4();
         this.rotationXMatrix = mat4();
+        this.uTime = gl.getUniformLocation(this.program, "time");
         this.modelMatrixID = gl.getUniformLocation(this.program, "modelMatrix");
         this.cameraMatrixID = gl.getUniformLocation(
             this.program,
@@ -52,6 +54,7 @@ class glObject {
         this.shininess = 80.0;
 
         this.useVertex = gl.getUniformLocation(this.program, "useVertex");
+        this.useDistort = gl.getUniformLocation(this.program, "useDistort");
         this.useReflection = gl.getUniformLocation(
             this.program,
             "useReflection"
@@ -404,7 +407,9 @@ class glObject {
         gl.vertexAttribPointer(this.aTexs, 2, gl.FLOAT, false, 0, 0);
         gl.uniform1i(this.textureSampler, 0);
         gl.uniform1f(this.useVertex, 0.0);
+        gl.uniform1f(this.useDistort, useCarCamera); 
         gl.uniform1f(this.useReflection, this.reflect);
+        gl.uniform1f(this.uTime, this.time);
         // gl.uniform1f(this.hasShadow, this.shadow);
 
         //adding in sun and flashlight
@@ -488,6 +493,7 @@ class glObject {
         // }
     }
     draw(camera, projection) {
+        this.time += 0.1;
         this.render(camera, projection);
     }
 
@@ -580,7 +586,7 @@ class glObject {
             cam.updateCamMatrix();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 			gl.disable(gl.DEPTH_TEST);
-            skybox.draw(cam, proj_matrix);
+         skybox.render(cam, proj_matrix);
 			gl.enable(gl.DEPTH_TEST);
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i] != this) {

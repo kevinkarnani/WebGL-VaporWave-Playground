@@ -4,6 +4,7 @@ class Skybox {
 
         this.vPositions = [];
         this.build();
+        this.time = 0.0;
 
         //  Load shaders and initialize attribute buffers
         this.program = initShaders(
@@ -19,6 +20,8 @@ class Skybox {
         this.rotationZMatrix = mat4();
         this.rotationYMatrix = mat4();
         this.rotationXMatrix = mat4();
+        this.uTime = gl.getUniformLocation(this.program, "time");
+        this.useDistort = gl.getUniformLocation(this.program, "useDistort");
         this.modelMatrixID = gl.getUniformLocation(this.program, "modelMatrix");
         this.cameraMatrixID = gl.getUniformLocation(
             this.program,
@@ -185,6 +188,10 @@ class Skybox {
         this.vPositions.push(vec4(c[0], c[1], c[2], 1.0));
     }
     draw(camera, projection) {
+      this.time += 0.1;
+      this.render(camera, projection);
+    }
+    render(camera, projection) {
         var c = lookAt(
             vec3(0, 0, 0),
             subtract(vec3(0, 0, 0), camera.n),
@@ -198,6 +205,8 @@ class Skybox {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.textureID);
         gl.uniform1i(this.textureUnit, 0);
+        gl.uniform1f(this.useDistort, useCarCamera); 
+        gl.uniform1f(this.uTime, this.time);
 
         gl.uniformMatrix4fv(
             this.modelMatrixID,
